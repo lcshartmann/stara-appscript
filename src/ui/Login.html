@@ -1,0 +1,37 @@
+<div id="loginView" class="layout">
+  <div class="card login-card">
+    <div class="brand">
+      <img class="brand-logo" src="https://cdn.brandfetch.io/idSuWMr7wH/w/1080/h/1080/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B" alt="Stara" />
+      <div class="brand-title">Mini ERP - Treinamento</div>
+    </div>
+    <p class="content-subtitle">Acesse o sistema para iniciar seu fluxo operacional.</p>
+    <div id="erro" class="alert alert-error" style="display:none"></div>
+    <div class="field"><label for="usuario">Usuário</label><input id="usuario" type="text" placeholder="Digite seu usuário" /></div>
+    <div class="field"><label for="senha">Senha</label><input id="senha" type="password" placeholder="Digite sua senha" /></div>
+    <button id="btnEntrar" class="btn btn-primary" type="button">Entrar</button>
+    <div class="helper">Ambiente de treinamento interno</div>
+  </div>
+</div>
+
+<script>
+  function mostrarLogin() { document.getElementById('loginView').style.display = 'flex'; document.getElementById('appView').style.display = 'none'; }
+  function exibirErro(msg){ var el=document.getElementById('erro'); el.textContent=msg; el.style.display='flex'; }
+  function fazerLogin() {
+    var usuario = document.getElementById('usuario').value.trim();
+    var senha = document.getElementById('senha').value;
+    var btn = document.getElementById('btnEntrar');
+    document.getElementById('erro').style.display='none';
+    if (!usuario || !senha) return exibirErro('Usuário e senha são obrigatórios');
+    btn.disabled = true; btn.textContent = 'Autenticando...';
+    google.script.run.withSuccessHandler(function (resposta) {
+      btn.disabled = false; btn.textContent = 'Entrar';
+      if (resposta.sucesso) { sessionStorage.setItem('usuario', JSON.stringify(resposta.usuario)); mostrarApp(); }
+      else exibirErro(resposta.erro || 'Falha na autenticação');
+    }).withFailureHandler(function (erro) {
+      btn.disabled = false; btn.textContent = 'Entrar'; exibirErro('Erro: ' + erro);
+    }).autenticar(usuario, senha);
+  }
+  document.getElementById('btnEntrar').addEventListener('click', fazerLogin);
+  document.getElementById('usuario').addEventListener('keypress', function (e) { if (e.key === 'Enter') fazerLogin(); });
+  document.getElementById('senha').addEventListener('keypress', function (e) { if (e.key === 'Enter') fazerLogin(); });
+</script>

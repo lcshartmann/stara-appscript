@@ -1,0 +1,37 @@
+<div id="appView" class="app">
+  <div class="header">
+    <div class="header-left">
+      <img class="header-logo" src="https://cdn.brandfetch.io/idSuWMr7wH/w/1080/h/1080/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B" alt="Stara" />
+      <div class="header-title"><div class="header-brand">Stara</div><div class="header-subtitle">Painel Administrativo - ERP Treinamento</div></div>
+    </div>
+    <button class="btn btn-secondary" id="btnLogout">Sair</button>
+  </div>
+  <div class="nav">
+    <div class="nav-item active" data-page="ops">📦 Ordens de Produção</div>
+    <div class="nav-item" data-page="projetos">📋 Projetos</div>
+    <div class="nav-item" data-page="relatorios">📊 Relatórios</div>
+    <div class="nav-item" data-page="usuarios">👥 Usuários</div>
+  </div>
+  <div class="main"><div class="content">
+    <div id="page-ops" class="page"><h1 class="content-title">Ordens de Produção</h1><p class="content-subtitle">Gerencie e acompanhe as ordens de produção do sistema.</p><div class="placeholder">Conteúdo de Ordens de Produção será carregado aqui</div></div>
+    <div id="page-projetos" class="page" style="display:none"><h1 class="content-title">Projetos</h1><p class="content-subtitle">Crie e gerencie os projetos do centro de treinamento.</p><div class="placeholder">Conteúdo de Projetos será carregado aqui</div></div>
+    <div id="page-relatorios" class="page" style="display:none"><h1 class="content-title">Relatórios</h1><p class="content-subtitle">Visualize relatórios de desempenho e produtividade.</p><div class="placeholder">Conteúdo de Relatórios será carregado aqui</div></div>
+    <div id="page-usuarios" class="page" style="display:none"><h1 class="content-title">Usuários</h1><p class="content-subtitle">Gerencie usuários e permissões do sistema.</p><div class="placeholder">Conteúdo de Usuários será carregado aqui</div></div>
+  </div></div>
+</div>
+
+<script>
+  function mostrarApp() {
+    document.getElementById('loginView').style.display = 'none';
+    document.getElementById('appView').style.display = 'flex';
+    ativarPagina('ops');
+  }
+  function ativarPagina(page) {
+    document.querySelectorAll('.nav-item').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-page') === page); });
+    document.querySelectorAll('.page').forEach(function (el) { el.style.display = 'none'; });
+    document.getElementById('page-' + page).style.display = 'block';
+  }
+  document.getElementById('btnLogout').addEventListener('click', function () { sessionStorage.removeItem('usuario'); mostrarLogin(); });
+  document.querySelectorAll('.nav-item').forEach(function (item) { item.addEventListener('click', function () { ativarPagina(this.getAttribute('data-page')); }); });
+  (function init(){ var usuario = sessionStorage.getItem('usuario'); if (usuario) mostrarApp(); else mostrarLogin(); })();
+</script>
