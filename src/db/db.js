@@ -1,36 +1,50 @@
 var DB = (function () {
   var DB_FOLDER_NAME = 'erp_treinamento';
-  var FOLDER_ID_CACHE = null;
-  var FILE_ID_CACHE = {};
+  var props = PropertiesService.getScriptProperties();
 
   function getDbFolderId() {
-    if (FOLDER_ID_CACHE) {
-      return FOLDER_ID_CACHE;
+    var folderId = props.getProperty('DB_FOLDER_ID');
+    
+    if (folderId) {
+      try {
+        // Valida se a pasta ainda existe e é acessível
+        DriveApp.getFolderById(folderId);
+        return folderId;
+      } catch (e) {
+        // ID inválido ou deletado, limpa e continua para busca nominal
+        props.deleteProperty('DB_FOLDER_ID');
+      }
     }
 
     var folders = DriveApp.getFoldersByName(DB_FOLDER_NAME);
     var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(DB_FOLDER_NAME);
-    FOLDER_ID_CACHE = folder.getId();
-    return FOLDER_ID_CACHE;
+    folderId = folder.getId();
+    props.setProperty('DB_FOLDER_ID', folderId);
+    return folderId;
   }
 
   function getDbFolder() {
-    var folderId = getDbFolderId();
-    return DriveApp.getFolderById(folderId);
+    return DriveApp.getFolderById(getDbFolderId());
   }
 
   function getOrCreateFile(entityName) {
-    var fileName = entityName + '.json';
+    var propKey = 'DB_FILE_ID_' + entityName;
+    var fileId = props.getProperty(propKey);
 
-    if (FILE_ID_CACHE[fileName]) {
-      return DriveApp.getFileById(FILE_ID_CACHE[fileName]);
+    if (fileId) {
+      try {
+        return DriveApp.getFileById(fileId);
+      } catch (e) {
+        props.deleteProperty(propKey);
+      }
     }
 
     var folder = getDbFolder();
+    var fileName = entityName + '.json';
     var files = folder.getFilesByName(fileName);
     var file = files.hasNext() ? files.next() : folder.createFile(fileName, '[]', MimeType.PLAIN_TEXT);
 
-    FILE_ID_CACHE[fileName] = file.getId();
+    props.setProperty(propKey, file.getId());
     return file;
   }
 
@@ -42,23 +56,38 @@ var DB = (function () {
       return [];
     }
 
-    var data = JSON.parse(content);
-    if (!Array.isArray(data)) {
-      throw new Error('DB.read: invalid JSON format for ' + entityName + ', expected array.');
+    try {
+      var data = JSON.parse(content);
+      if (!Array.isArray(data)) {
+        return [];
+      }
+      return data;
+    } catch (e) {
+      Logger.log('DB.read Error: ' + e.message);
+      return [];
     }
-
-    return data;
   }
 
   function write(entityName, data) {
     var lock = LockService.getScriptLock();
-    lock.waitLock(3000);
+    // Aumentado timeout para 5 segundos para maior segurança em concorrência
+    lock.waitLock(5000);
 
     try {
       var file = getOrCreateFile(entityName);
-      file.setContent(JSON.stringify(data, null, 2));
+      // Removida indentação (null, 2) para reduzir tamanho do arquivo e tempo de CPU
+      file.setContent(JSON.stringify(data));
     } finally {
       lock.releaseLock();
+    }
+  }
+
+  function clearFileIdCache() {
+    var allProps = props.getProperties();
+    for (var key in allProps) {
+      if (key.indexOf('DB_FILE_ID_') === 0 || key === 'DB_FOLDER_ID') {
+        props.deleteProperty(key);
+      }
     }
   }
 
