@@ -13,19 +13,100 @@
     <div class="nav-item" data-page="usuarios">👥 Usuários</div>
   </div>
   <div class="main"><div class="content">
-    <div id="page-ops" class="page"><h1 class="content-title">Ordens de Produção</h1><p class="content-subtitle">Gerencie e acompanhe as ordens de produção do sistema.</p><div class="placeholder">Conteúdo de Ordens de Produção será carregado aqui</div></div>
-    <div id="page-projetos" class="page" style="display:none"><h1 class="content-title">Projetos</h1><p class="content-subtitle">Crie e gerencie os projetos do centro de treinamento.</p><div class="placeholder">Conteúdo de Projetos será carregado aqui</div></div>
+    <div id="page-ops" class="page">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h1 class="content-title">Ordens de Produção</h1>
+          <p class="content-subtitle">Gerencie as ordens de produção do sistema.</p>
+        </div>
+        <button class="btn btn-primary" id="btnNovaOp">Nova OP</button>
+      </div>
+
+      <div id="formOp" class="card mb-4" style="display:none">
+        <h2 id="formOpTitle">Nova Ordem de Produção</h2>
+        <div class="field">
+          <label>Projeto</label>
+          <select id="selectProjetoOp"></select>
+        </div>
+        <div class="field">
+          <label>Quantidade</label>
+          <input type="number" id="inputQtdOp" min="1" />
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-primary" id="btnSalvarOp">Criar OP</button>
+          <button class="btn btn-secondary" id="btnCancelarOp">Cancelar</button>
+        </div>
+      </div>
+
+      <h3 class="mt-4">Em Aberto / Andamento</h3>
+      <div id="listaOpsAtivas"></div>
+
+      <h3 class="mt-4">Histórico (Finalizadas)</h3>
+      <div id="listaOpsFinalizadas"></div>
+    </div>
+    
+    <div id="page-projetos" class="page" style="display:none">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h1 class="content-title">Projetos</h1>
+          <p class="content-subtitle">Crie e gerencie os projetos do centro de treinamento.</p>
+        </div>
+        <button class="btn btn-primary" id="btnNovoProjeto">Novo Projeto</button>
+      </div>
+      
+      <div id="listaProjetos"></div>
+
+      <div id="formProjeto" class="card" style="display:none">
+        <h2 id="formTitle">Novo Projeto</h2>
+        <div class="field">
+          <label>Nome do Projeto</label>
+          <input type="text" id="inputNomeProjeto" />
+        </div>
+
+        <div class="form-group">
+          <div class="form-group-title">
+            Materiais
+            <button class="btn btn-secondary" onclick="addMaterialField()">+</button>
+          </div>
+          <ul id="materiaisList" class="dynamic-list">
+            <li class="dynamic-item">
+              <input type="text" placeholder="Nome" class="mat-nome" />
+              <input type="text" placeholder="Qtd" class="mat-qtd" />
+              <button class="btn btn-danger" onclick="removeDynamicField(this)">x</button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="form-group">
+          <div class="form-group-title">
+            Tarefas
+            <button class="btn btn-secondary" onclick="addTaskField()">+</button>
+          </div>
+          <ul id="tarefasList" class="dynamic-list">
+            <li class="dynamic-item" style="flex-direction: column; align-items: flex-start;">
+              <div style="width:100%; display:flex; gap:8px;">
+                <input type="text" placeholder="Nome" class="tar-nome" />
+                <input type="text" placeholder="Descrição" class="tar-desc" />
+                <button class="btn btn-danger" onclick="removeDynamicField(this)">x</button>
+              </div>
+              <textarea placeholder="Links (um por linha)" class="tar-links" style="margin-top:8px;"></textarea>
+            </li>
+          </ul>
+        </div>
+
+        <div class="flex gap-2">
+          <button class="btn btn-primary" id="btnSalvarProjeto">Salvar</button>
+          <button class="btn btn-secondary" id="btnCancelarProjeto">Cancelar</button>
+        </div>
+      </div>
+    </div>
+    
     <div id="page-relatorios" class="page" style="display:none"><h1 class="content-title">Relatórios</h1><p class="content-subtitle">Visualize relatórios de desempenho e produtividade.</p><div class="placeholder">Conteúdo de Relatórios será carregado aqui</div></div>
     <div id="page-usuarios" class="page" style="display:none"><h1 class="content-title">Usuários</h1><p class="content-subtitle">Gerencie usuários e permissões do sistema.</p><div class="placeholder">Conteúdo de Usuários será carregado aqui</div></div>
   </div></div>
 </div>
 
 <script>
-  function mostrarApp() {
-    document.getElementById('loginView').style.display = 'none';
-    document.getElementById('appView').style.display = 'flex';
-    ativarPagina('ops');
-  }
   function ativarPagina(page) {
     document.querySelectorAll('.nav-item').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-page') === page); });
     document.querySelectorAll('.page').forEach(function (el) { el.style.display = 'none'; });
@@ -33,5 +114,195 @@
   }
   document.getElementById('btnLogout').addEventListener('click', function () { sessionStorage.removeItem('usuario'); mostrarLogin(); });
   document.querySelectorAll('.nav-item').forEach(function (item) { item.addEventListener('click', function () { ativarPagina(this.getAttribute('data-page')); }); });
-  (function init(){ var usuario = sessionStorage.getItem('usuario'); if (usuario) mostrarApp(); else mostrarLogin(); })();
+
+  (function OpsModule() {
+    function carregarOps() {
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) renderListaOps(res.ops);
+        else alert('Erro ao carregar OPs: ' + res.erro);
+      }).getOps();
+    }
+
+    function renderListaOps(ops) {
+      var ativas = [];
+      var finalizadas = [];
+      ops.forEach(function(o) {
+        if (o.status === 'finalizada') finalizadas.push(o);
+        else ativas.push(o);
+      });
+
+      document.getElementById('listaOpsAtivas').innerHTML = renderTabela(ativas, true);
+      document.getElementById('listaOpsFinalizadas').innerHTML = renderTabela(finalizadas, false);
+    }
+
+    function renderTabela(lista, podeCancelar) {
+      if (lista.length === 0) return '<p class="text-muted">Nenhuma OP encontrada.</p>';
+      var html = '<table><thead><tr><th>Projeto</th><th>Status</th><th>Qtd</th><th>Ações</th></tr></thead><tbody>';
+      lista.forEach(function(o) {
+        html += '<tr><td>' + o.nome_projeto + '</td><td>' + o.status + '</td><td>' + o.quantidade_realizada + '/' + o.quantidade_total + '</td><td>';
+        if (podeCancelar) html += '<button class="btn btn-danger" onclick="cancelarOp(' + o.id + ')">Cancelar</button>';
+        html += '</td></tr>';
+      });
+      return html + '</tbody></table>';
+    }
+
+    window.cancelarOp = function(id) {
+      if (!confirm('Deseja cancelar esta OP?')) return;
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) carregarOps();
+        else alert('Erro: ' + res.erro);
+      }).cancelarOp(id);
+    };
+
+    document.getElementById('btnNovaOp').addEventListener('click', function() {
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) {
+          var select = document.getElementById('selectProjetoOp');
+          select.innerHTML = res.projetos.map(function(p) { return '<option value="'+p.id+'">'+p.nome+'</option>' }).join('');
+          document.getElementById('formOp').style.display = 'block';
+          document.getElementById('btnNovaOp').style.display = 'none';
+        }
+      }).getProjetos();
+    });
+
+    document.getElementById('btnCancelarOp').addEventListener('click', function() {
+      document.getElementById('formOp').style.display = 'none';
+      document.getElementById('btnNovaOp').style.display = 'block';
+    });
+
+    document.getElementById('btnSalvarOp').addEventListener('click', function() {
+      var btn = this;
+      var originalText = btn.innerText;
+      btn.innerText = 'Criando...';
+      btn.disabled = true;
+
+      var data = { projeto_id: document.getElementById('selectProjetoOp').value, quantidade: document.getElementById('inputQtdOp').value };
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerText = originalText;
+          btn.disabled = false;
+          if (res.sucesso) {
+            carregarOps();
+            document.getElementById('btnCancelarOp').click();
+          } else {
+            alert('Erro: ' + res.erro);
+          }
+        })
+        .withFailureHandler(function(err) {
+            btn.innerText = originalText;
+            btn.disabled = false;
+            alert('Erro ao criar OP: ' + err);
+        })
+        .criarOp(data);
+    });
+
+    carregarOps();
+  })();
+
+  (function ProjetosModule() {
+    function carregarProjetos() {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (res.sucesso) {
+            renderLista(res.projetos);
+          } else {
+            alert('Erro ao carregar projetos: ' + res.erro);
+          }
+        })
+        .getProjetos();
+    }
+
+    function renderLista(projetos) {
+      var html = '<table><thead><tr><th>Nome</th></tr></thead><tbody>';
+      projetos.forEach(function(p) {
+        html += '<tr><td>' + p.nome + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('listaProjetos').innerHTML = html;
+    }
+
+    document.getElementById('btnNovoProjeto').addEventListener('click', function() {
+      document.getElementById('listaProjetos').style.display = 'none';
+      document.getElementById('btnNovoProjeto').style.display = 'none';
+      document.getElementById('formProjeto').style.display = 'block';
+    });
+
+    document.getElementById('btnCancelarProjeto').addEventListener('click', function() {
+      document.getElementById('listaProjetos').style.display = 'block';
+      document.getElementById('btnNovoProjeto').style.display = 'block';
+      document.getElementById('formProjeto').style.display = 'none';
+    });
+
+    document.getElementById('btnSalvarProjeto').addEventListener('click', function() {
+      var btn = this;
+      var originalText = btn.innerText;
+      btn.innerText = 'Salvando...';
+      btn.disabled = true;
+
+      var data = {
+        nome: document.getElementById('inputNomeProjeto').value,
+        materiais: Array.from(document.querySelectorAll('#materiaisList .dynamic-item')).map(el => ({
+          nome: el.querySelector('.mat-nome').value,
+          quantidade: el.querySelector('.mat-qtd').value
+        })).filter(m => m.nome),
+        tarefas: Array.from(document.querySelectorAll('#tarefasList .dynamic-item')).map(el => ({
+          nome: el.querySelector('.tar-nome').value,
+          descricao: el.querySelector('.tar-desc').value,
+          links: el.querySelector('.tar-links').value
+        })).filter(t => t.nome)
+      };
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerText = originalText;
+          btn.disabled = false;
+          if (res.sucesso) {
+            alert('Projeto criado!');
+            carregarProjetos();
+            document.getElementById('btnCancelarProjeto').click();
+          } else {
+            alert('Erro: ' + res.erro);
+          }
+        })
+        .withFailureHandler(function(err) {
+            btn.innerText = originalText;
+            btn.disabled = false;
+            alert('Erro ao salvar: ' + err);
+        })
+        .criarProjeto(data);
+    });
+
+    window.addMaterialField = function() {
+      var ul = document.getElementById('materiaisList');
+      var li = document.createElement('li');
+      li.className = 'dynamic-item';
+      li.innerHTML = '<input type="text" placeholder="Nome" class="mat-nome" /> <input type="text" placeholder="Qtd" class="mat-qtd" /> <button class="btn btn-danger" onclick="removeDynamicField(this)">x</button>';
+      ul.appendChild(li);
+    };
+    
+    window.addTaskField = function() {
+      var ul = document.getElementById('tarefasList');
+      var li = document.createElement('li');
+      li.className = 'dynamic-item';
+      li.style.flexDirection = 'column'; // Adjust layout for textarea
+      li.style.alignItems = 'flex-start';
+      li.innerHTML = `
+        <div style="width:100%; display:flex; gap:8px;">
+            <input type="text" placeholder="Nome" class="tar-nome" />
+            <input type="text" placeholder="Descrição" class="tar-desc" />
+            <button class="btn btn-danger" onclick="removeDynamicField(this)">x</button>
+        </div>
+        <textarea placeholder="Links (um por linha)" class="tar-links" style="margin-top:8px;"></textarea>
+      `;
+      ul.appendChild(li);
+    };
+
+    window.removeDynamicField = function(btn) {
+      // If nested inside a column layout, look for the parent LI
+      var item = btn.closest('.dynamic-item');
+      if (item) item.remove();
+    };
+
+    carregarProjetos();
+  })();
 </script>

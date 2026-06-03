@@ -15,6 +15,7 @@
 
 <script>
   function mostrarLogin() { document.getElementById('loginView').style.display = 'flex'; document.getElementById('appView').style.display = 'none'; }
+  function mostrarApp() { document.getElementById('loginView').style.display = 'none'; document.getElementById('appView').style.display = 'flex'; }
   function exibirErro(msg){ var el=document.getElementById('erro'); el.textContent=msg; el.style.display='flex'; }
   function fazerLogin() {
     var usuario = document.getElementById('usuario').value.trim();
