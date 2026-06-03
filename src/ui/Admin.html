@@ -102,7 +102,40 @@
     </div>
     
     <div id="page-relatorios" class="page" style="display:none"><h1 class="content-title">Relatórios</h1><p class="content-subtitle">Visualize relatórios de desempenho e produtividade.</p><div class="placeholder">Conteúdo de Relatórios será carregado aqui</div></div>
-    <div id="page-usuarios" class="page" style="display:none"><h1 class="content-title">Usuários</h1><p class="content-subtitle">Gerencie usuários e permissões do sistema.</p><div class="placeholder">Conteúdo de Usuários será carregado aqui</div></div>
+    <div id="page-usuarios" class="page" style="display:none">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h1 class="content-title">Usuários</h1>
+          <p class="content-subtitle">Gerencie usuários e permissões do sistema.</p>
+        </div>
+        <button class="btn btn-primary" id="btnNovoUsuario">Novo Usuário</button>
+      </div>
+
+      <div id="formUsuario" class="card mb-4" style="display:none">
+        <h2 id="formUsuarioTitle">Novo Usuário</h2>
+        <div class="field">
+          <label>Nome de Usuário</label>
+          <input type="text" id="inputNomeUsuario" />
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="inputSenhaUsuario" />
+        </div>
+        <div class="field">
+          <label>Perfil (Role)</label>
+          <select id="selectRoleUsuario">
+            <option value="operador">Operador</option>
+            <option value="gestor">Gestor</option>
+          </select>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-primary" id="btnSalvarUsuario">Salvar</button>
+          <button class="btn btn-secondary" id="btnCancelarUsuario">Cancelar</button>
+        </div>
+      </div>
+
+      <div id="listaUsuarios"></div>
+    </div>
   </div></div>
 </div>
 
@@ -114,6 +147,100 @@
   }
   document.getElementById('btnLogout').addEventListener('click', function () { sessionStorage.removeItem('usuario'); mostrarLogin(); });
   document.querySelectorAll('.nav-item').forEach(function (item) { item.addEventListener('click', function () { ativarPagina(this.getAttribute('data-page')); }); });
+
+  (function UsuariosModule() {
+    function carregarUsuarios() {
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) renderLista(res.usuarios);
+        else alert('Erro ao carregar usuários: ' + res.erro);
+      }).getUsuarios();
+    }
+
+    function renderLista(usuarios) {
+      if (usuarios.length === 0) {
+        document.getElementById('listaUsuarios').innerHTML = '<p class="text-muted">Nenhum usuário encontrado.</p>';
+        return;
+      }
+
+      var html = '<table><thead><tr><th>Nome</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
+      usuarios.forEach(function(u) {
+        var statusBadge = u.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-error">Inativo</span>';
+        var statusBtnText = u.ativo ? 'Desativar' : 'Ativar';
+        var statusBtnClass = u.ativo ? 'btn-secondary' : 'btn-accent';
+
+        html += '<tr>' +
+          '<td>' + u.nome + '</td>' +
+          '<td>' + u.role + '</td>' +
+          '<td>' + statusBadge + '</td>' +
+          '<td>' +
+            '<div class="flex gap-1">' +
+              '<button class="btn ' + statusBtnClass + '" onclick="alternarStatusUsuario(' + u.id + ', ' + !u.ativo + ')">' + statusBtnText + '</button>' +
+              '<button class="btn btn-danger" onclick="removerUsuario(' + u.id + ')">Excluir</button>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('listaUsuarios').innerHTML = html;
+    }
+
+    document.getElementById('btnNovoUsuario').addEventListener('click', function() {
+      document.getElementById('formUsuario').style.display = 'block';
+      document.getElementById('btnNovoUsuario').style.display = 'none';
+      document.getElementById('inputNomeUsuario').value = '';
+      document.getElementById('inputSenhaUsuario').value = '';
+    });
+
+    document.getElementById('btnCancelarUsuario').addEventListener('click', function() {
+      document.getElementById('formUsuario').style.display = 'none';
+      document.getElementById('btnNovoUsuario').style.display = 'block';
+    });
+
+    document.getElementById('btnSalvarUsuario').addEventListener('click', function() {
+      var data = {
+        nome: document.getElementById('inputNomeUsuario').value,
+        senha: document.getElementById('inputSenhaUsuario').value,
+        role: document.getElementById('selectRoleUsuario').value
+      };
+
+      if (!data.nome || !data.senha) {
+        alert('Nome e senha são obrigatórios.');
+        return;
+      }
+
+      var btn = this;
+      btn.disabled = true;
+      btn.innerText = 'Salvando...';
+
+      google.script.run.withSuccessHandler(function(res) {
+        btn.disabled = false;
+        btn.innerText = 'Salvar';
+        if (res.sucesso) {
+          carregarUsuarios();
+          document.getElementById('btnCancelarUsuario').click();
+        } else {
+          alert('Erro: ' + res.erro);
+        }
+      }).criarUsuarioNovo(data);
+    });
+
+    window.alternarStatusUsuario = function(id, novoStatus) {
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) carregarUsuarios();
+        else alert('Erro: ' + res.erro);
+      }).alternarStatusUsuario(id, novoStatus);
+    };
+
+    window.removerUsuario = function(id) {
+      if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) carregarUsuarios();
+        else alert('Erro: ' + res.erro);
+      }).removerUsuario(id);
+    };
+
+    carregarUsuarios();
+  })();
 
   (function OpsModule() {
     function carregarOps() {

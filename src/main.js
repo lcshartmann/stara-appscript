@@ -112,9 +112,47 @@ function cancelarOp(opId) {
   }
 }
 
+/**
+ * Funções de Gerenciamento de Usuários
+ */
+
+function getUsuarios() {
+  try {
+    return { sucesso: true, usuarios: UsuariosDB.listar() };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
+function criarUsuarioNovo(data) {
+  try {
+    var usuario = AuthService.criarUsuario(data.nome, data.senha, data.role);
+    return { sucesso: true, usuario: usuario };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
+function alternarStatusUsuario(id, ativo) {
+  try {
+    UsuariosDB.atualizar(parseInt(id), { ativo: ativo });
+    return { sucesso: true };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
+function removerUsuario(id) {
+  try {
+    UsuariosDB.remover(parseInt(id));
+    return { sucesso: true };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
 function doPost(e) {
   const body = JSON.parse(e.postData.contents);
 
   Logger.log(body);
-  AuthService.criarUsuario('lucas', 'lucas', 'gestor');
 }
