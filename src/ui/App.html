@@ -24,6 +24,7 @@
 
         /* Backgrounds */
         --bg-primary: #ffffff;
+        --bg-secondary: #f1f3f4;
         --bg-surface: #ffffff;
         --bg-muted: #e6e3e1;
         --bg-hover: #e6e3e1;
@@ -71,7 +72,7 @@
       body {
         margin: 0;
         padding: 0;
-        background: var(--bg-primary);
+        background: var(--bg-secondary);
         color: var(--text-primary);
         font-family: "Geist", sans-serif;
         line-height: 1.5;
@@ -96,6 +97,7 @@
       .main {
         flex: 1;
         display: flex;
+        margin: 30px;
         overflow: hidden;
       }
 
@@ -110,10 +112,11 @@
         padding: 24px;
         overflow-y: auto;
         background: var(--bg-primary);
-        max-width: 70vw;
+        max-width: 60vw;
         margin: 0 auto;
-        border-left: 1px solid #e6e8ec;
-        border-right: 1px solid #e6e8ec;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        border: 1px solid #e6e8ec;
+        border-radius: 1%;
       }
 
       .sidebar {
@@ -162,6 +165,7 @@
         display: flex;
         overflow-x: auto;
         background: var(--bg-surface);
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
         border-bottom: 1px solid #e6e8ec;
       }
 
@@ -510,7 +514,7 @@
       /* Admin.html
       */
       .header {
-        background: var(--bg-surface);
+        background: var(--primary-600);
         border-bottom: 1px solid #e6e8ec;
         padding: 12px 24px;
         display: flex;
@@ -541,7 +545,7 @@
 
       .header-brand {
         font-size: 12px;
-        color: var(--text-muted);
+        color: white;
         text-transform: uppercase;
         font-weight: 600;
         letter-spacing: 0.5px;
@@ -550,7 +554,7 @@
       .header-subtitle {
         font-size: 16px;
         font-weight: 600;
-        color: var(--text-primary);
+        color: white;
       }
 
       .header-right {

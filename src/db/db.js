@@ -51,14 +51,14 @@ var DB = (function () {
   }
 
   function write(entityName, data) {
-    var lock = LockService.getScriptLock();
-    lock.waitLock(30000);
+    //var lock = LockService.getScriptLock();
+    //lock.waitLock(30000);
 
     try {
       var file = getOrCreateFile(entityName);
       file.setContent(JSON.stringify(data, null, 2));
     } finally {
-      lock.releaseLock();
+      //lock.releaseLock();
     }
   }
 
