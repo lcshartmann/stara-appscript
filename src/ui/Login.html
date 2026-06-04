@@ -14,8 +14,28 @@
 </div>
 
 <script>
-  function mostrarLogin() { document.getElementById('loginView').style.display = 'flex'; document.getElementById('appView').style.display = 'none'; }
-  function mostrarApp() { document.getElementById('loginView').style.display = 'none'; document.getElementById('appView').style.display = 'flex'; }
+  function mostrarLogin() { 
+    document.getElementById('loginView').style.display = 'flex'; 
+    document.getElementById('appView').style.display = 'none'; 
+    document.getElementById('operatorView').style.display = 'none';
+  }
+
+  function mostrarApp() { 
+    var user = JSON.parse(sessionStorage.getItem('usuario'));
+    if (!user) return mostrarLogin();
+
+    document.getElementById('loginView').style.display = 'none'; 
+
+    if (user.role === 'gestor') {
+      document.getElementById('appView').style.display = 'flex';
+      document.getElementById('operatorView').style.display = 'none';
+    } else {
+      document.getElementById('appView').style.display = 'none';
+      document.getElementById('operatorView').style.display = 'flex';
+      OperadorModule.inicializar();
+    }
+  }
+
   function exibirErro(msg){ var el=document.getElementById('erro'); el.textContent=msg; el.style.display='flex'; }
   function fazerLogin() {
     var usuario = document.getElementById('usuario').value.trim();
@@ -32,7 +52,17 @@
       btn.disabled = false; btn.textContent = 'Entrar'; exibirErro('Erro: ' + erro);
     }).autenticar(usuario, senha);
   }
+
   document.getElementById('btnEntrar').addEventListener('click', fazerLogin);
   document.getElementById('usuario').addEventListener('keypress', function (e) { if (e.key === 'Enter') fazerLogin(); });
   document.getElementById('senha').addEventListener('keypress', function (e) { if (e.key === 'Enter') fazerLogin(); });
+
+  // Auto-login se já houver sessão
+  document.addEventListener('DOMContentLoaded', function() {
+    if (sessionStorage.getItem('usuario')) {
+      mostrarApp();
+    } else {
+      mostrarLogin();
+    }
+  });
 </script>

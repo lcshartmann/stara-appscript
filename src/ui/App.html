@@ -452,6 +452,46 @@
         font-weight: 600;
       }
 
+      /* Toasts */
+      #toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .toast {
+        min-width: 250px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        background: #333;
+        color: white;
+        font-size: var(--font-sm);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        animation: toast-in 0.3s ease-out forwards;
+      }
+
+      .toast-success { background: var(--success); }
+      .toast-error { background: var(--error); }
+      .toast-info { background: var(--info); }
+      .toast-warning { background: var(--warning); color: #000; }
+
+      @keyframes toast-in {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+
+      @keyframes toast-out {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+
       /* Utilities */
 
       .text-center { text-align: center; }
@@ -578,10 +618,34 @@
         font-size: 11px;
         color: var(--text-muted);
       }
+      .page {
+        flex: 1;
+        display: flex;
+      }
     </style>
+    <script>
+      function showToast(message, type = 'info', duration = 3000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return console.error('Toast container not found');
+        
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerText = message;
+        
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.animation = 'toast-out 0.3s ease-in forwards';
+          setTimeout(() => toast.remove(), 300);
+        }, duration);
+      }
+    </script>
   </head>
   <body>
+    <div id="toast-container"></div>
+    
     <?!= include('ui/Login'); ?>
     <?!= include('ui/Admin'); ?>
+    <?!= include('ui/Operador'); ?>
   </body>
 </html>

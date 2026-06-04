@@ -1,61 +1,28 @@
 var TarefasDB = (function () {
-  var ENTITY = 'tarefas';
 
   function listar() {
-    return DB.read(ENTITY);
-  }
-
-  function getById(id) {
-    var items = listar();
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].id === id) {
-        return items[i];
+    var projetos = ProjetosDB.listar();
+    var todasTarefas = [];
+    projetos.forEach(function(p) {
+      if (p.tarefas) {
+        p.tarefas.forEach(function(t) {
+          t.projeto_id = p.id;
+          todasTarefas.push(t);
+        });
       }
-    }
-    throw new Error('TarefasDB.getById: tarefa nao encontrada: ' + id);
+    });
+    return todasTarefas;
   }
 
-  function criar(data) {
-    var items = listar();
-    var novo = data || {};
-    if (novo.id == null) {
-      novo.id = Date.now();
-    }
-    items.push(novo);
-    DB.write(ENTITY, items);
-    return novo;
-  }
-
-  function atualizar(id, updates) {
-    var items = listar();
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].id === id) {
-        var atual = items[i];
-        items[i] = Object.assign({}, atual, updates, { id: atual.id });
-        DB.write(ENTITY, items);
-        return items[i];
-      }
-    }
-    throw new Error('TarefasDB.atualizar: tarefa nao encontrada: ' + id);
-  }
-
-  function remover(id) {
-    var items = listar();
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].id === id) {
-        var removida = items.splice(i, 1)[0];
-        DB.write(ENTITY, items);
-        return removida;
-      }
-    }
-    throw new Error('TarefasDB.remover: tarefa nao encontrada: ' + id);
+  function getByProjeto(projetoId) {
+    var projeto = ProjetosDB.getById(projetoId);
+    return projeto.tarefas || [];
   }
 
   return {
     listar: listar,
-    getById: getById,
-    criar: criar,
-    atualizar: atualizar,
-    remover: remover
+    getByProjeto: getByProjeto,
+    criar: function() { throw new Error('Use ProjetosDB para criar tarefas integradas'); },
+    criarMuitos: function() { throw new Error('Use ProjetosDB para criar tarefas integradas'); }
   };
 })();

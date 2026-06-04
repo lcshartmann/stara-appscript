@@ -12,242 +12,206 @@
     <div class="nav-item" data-page="relatorios">📊 Relatórios</div>
     <div class="nav-item" data-page="usuarios">👥 Usuários</div>
   </div>
-  <div class="main"><div class="content">
-    <div id="page-ops" class="page">
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h1 class="content-title">Ordens de Produção</h1>
-          <p class="content-subtitle">Gerencie as ordens de produção do sistema.</p>
+  <div class="main">
+    
+    <!-- PAGE: ORDENS DE PRODUÇÃO -->
+    <div id="page-ops" class="page" style="flex-direction: row; gap: 24px; width: 100%;">
+      <!-- Esquerda: Listagem (flex-grow) -->
+      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+        <h1 class="content-title">Ordens de Produção</h1>
+        <p class="content-subtitle mb-4">Acompanhe o status das ordens em tempo real.</p>
+        
+        <div class="card" style="background: white; border: 1px solid #eef0f2; padding: 0; margin-bottom: 24px;">
+          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">📦 Em Aberto / Andamento</h2>
+          </div>
+          <div id="listaOpsAtivas" style="padding: 20px;"></div>
         </div>
-        <button class="btn btn-primary" id="btnNovaOp">Nova OP</button>
+
+        <div class="card" style="background: white; border: 1px solid #eef0f2; padding: 0;">
+          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">🕒 Histórico (Finalizadas)</h2>
+          </div>
+          <div id="listaOpsFinalizadas" style="padding: 20px;"></div>
+        </div>
       </div>
 
-      <div id="formOp" class="card mb-4" style="display:none">
-        <h2 id="formOpTitle">Nova Ordem de Produção</h2>
-        <div class="field">
-          <label>Projeto</label>
-          <select id="selectProjetoOp"></select>
-        </div>
-        <div class="field">
-          <label>Quantidade</label>
-          <input type="number" id="inputQtdOp" min="1" />
-        </div>
-        <div class="flex gap-2">
-          <button class="btn btn-primary" id="btnSalvarOp">Criar OP</button>
-          <button class="btn btn-secondary" id="btnCancelarOp">Cancelar</button>
+      <!-- Direita: Criar OP (35%) -->
+      <div class="content" style="max-width: 35%; flex: 0 0 35%; margin: 0;">
+        <div id="formOp" class="card" style="background: #f8f9fa; border: 1px solid #eef0f2; padding: 0;">
+          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">Nova Ordem de Produção</h2>
+          </div>
+          
+          <div style="padding: 24px;">
+            <div class="field">
+              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 8px;">Projeto Base</label>
+              <select id="selectProjetoOp" style="background: white; border: 1px solid #ddd;"></select>
+            </div>
+            <div class="field">
+              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 8px;">Quantidade Total (un)</label>
+              <input type="number" id="inputQtdOp" min="1" placeholder="Ex: 50" style="background: white; border: 1px solid #ddd;" />
+            </div>
+            
+            <div class="flex mt-6">
+              <button class="btn btn-primary btn-lg" id="btnSalvarOp" style="padding: 10px 24px; font-size: 14px; border-radius: 6px; width: 100%;">
+                Abrir Ordem de Produção
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      <h3 class="mt-4">Em Aberto / Andamento</h3>
-      <div id="listaOpsAtivas"></div>
-
-      <h3 class="mt-4">Histórico (Finalizadas)</h3>
-      <div id="listaOpsFinalizadas"></div>
     </div>
     
-    <div id="page-projetos" class="page" style="display:none">
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h1 class="content-title">Projetos</h1>
-          <p class="content-subtitle">Crie e gerencie os projetos do centro de treinamento.</p>
+    <!-- PAGE: PROJETOS -->
+    <div id="page-projetos" class="page" style="display:none; flex-direction: row; gap: 24px; width: 100%;">
+      <!-- Esquerda: Listagem (flex-grow) -->
+      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+        <h1 class="content-title">Projetos Cadastrados</h1>
+        <p class="content-subtitle mb-4">Gerencie os modelos de produção existentes.</p>
+        
+        <div class="card" style="background: white; border: 1px solid #eef0f2; padding: 0;">
+          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">📋 Lista de Projetos</h2>
+          </div>
+          <div id="listaProjetos" style="padding: 20px;"></div>
         </div>
-        <button class="btn btn-primary" id="btnNovoProjeto">Novo Projeto</button>
       </div>
-      
-      <div id="listaProjetos"></div>
 
-      <div id="formProjeto" class="card" style="display:none">
-        <h2 id="formTitle">Novo Projeto</h2>
-        <div class="field">
-          <label>Nome do Projeto</label>
-          <input type="text" id="inputNomeProjeto" />
-        </div>
-
-        <div class="form-group">
-          <div class="form-group-title">
-            Materiais
-            <button class="btn btn-secondary" onclick="addMaterialField()">+</button>
+      <!-- Direita: Novo Projeto (35%) -->
+      <div class="content" style="max-width: 35%; flex: 0 0 35%; margin: 0;">
+        <div id="formProjeto" class="card" style="background: var(--bg-secondary); border: 1px solid #eef0f2; padding: 0;">
+          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">Novo Projeto</h2>
           </div>
-          <ul id="materiaisList" class="dynamic-list">
-            <li class="dynamic-item">
-              <input type="text" placeholder="Nome" class="mat-nome" />
-              <input type="text" placeholder="Qtd" class="mat-qtd" />
-              <button class="btn btn-danger" onclick="removeDynamicField(this)">x</button>
-            </li>
-          </ul>
-        </div>
+          
+          <div style="padding: 24px;">
+            <div class="field">
+              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 8px;">Nome do Projeto</label>
+              <input type="text" id="inputNomeProjeto" placeholder="Ex: Suporte metálico tipo B" style="background: white; border: 1px solid #ddd;" />
+            </div>
 
-        <div class="form-group">
-          <div class="form-group-title">
-            Tarefas
-            <button class="btn btn-secondary" onclick="addTaskField()">+</button>
-          </div>
-          <ul id="tarefasList" class="dynamic-list">
-            <li class="dynamic-item" style="flex-direction: column; align-items: flex-start;">
-              <div style="width:100%; display:flex; gap:8px;">
-                <input type="text" placeholder="Nome" class="tar-nome" />
-                <input type="text" placeholder="Descrição" class="tar-desc" />
-                <button class="btn btn-danger" onclick="removeDynamicField(this)">x</button>
+            <!-- Materiais -->
+            <div class="mb-4">
+              <div class="flex justify-between items-center mb-2">
+                <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin: 0;">Materiais</label>
+                <button class="btn btn-primary btn-sm" onclick="addMaterialField()" style="border-radius: 6px; padding: 4px 12px;">+ Material</button>
               </div>
-              <textarea placeholder="Links (um por linha)" class="tar-links" style="margin-top:8px;"></textarea>
-            </li>
-          </ul>
-        </div>
+              <ul id="materiaisList" class="dynamic-list" style="margin: 0;">
+                <li class="dynamic-item" style="gap: 8px; margin-bottom: 8px; position: relative">
+                  <input type="text" placeholder="Nome" class="mat-nome" style="background: white; border: 1px solid #ddd;" />
+                  <input type="text" placeholder="Qtd" class="mat-qtd" style="background: white; border: 1px solid #ddd; max-width: 60px;" />
+                 <button class="btn btn-sm" onclick="removeDynamicField(this)" style="color: #c0392b; background: transparent; font-weight: bold;">X</button>
+                </li>
+              </ul>
+            </div>
 
-        <div class="flex gap-2">
-          <button class="btn btn-primary" id="btnSalvarProjeto">Salvar</button>
-          <button class="btn btn-secondary" id="btnCancelarProjeto">Cancelar</button>
+            <!-- Etapas -->
+            <div class="mb-4">
+              <div class="flex justify-between items-center mb-3">
+                <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin: 0;">Etapas</label>
+                <button class="btn btn-primary btn-sm" onclick="addTaskField()" style="border-radius: 6px; padding: 4px 12px;">+ Etapa</button>
+              </div>
+              <ul id="tarefasList" class="dynamic-list" style="margin: 0;">
+                <li class="dynamic-item" style="flex-direction: column; align-items: stretch; background: white; border: 1px solid #eee; padding: 12px; border-radius: 8px; position: relative; margin-bottom: 12px;">
+                  <button class="btn btn-sm" onclick="removeDynamicField(this)" style="position: absolute; top: 5px; right: 5px; color: #c0392b; background: transparent;">X</button>
+                  <input type="text" placeholder="Título" class="tar-nome mb-2" style="background: white; border: 1px solid #ddd; font-size: 12px;" />
+                  <textarea placeholder="Instrução" class="tar-desc" style="background: white; border: 1px solid #ddd; min-height: 40px; font-size: 11px;"></textarea>
+                  <textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2" style="background: white; border: 1px solid #ddd; font-size: 11px;"></textarea>
+                </li>
+              </ul>
+            </div>
+
+            <div class="flex mt-6">
+              <button class="btn btn-primary btn-lg" id="btnSalvarProjeto" style="padding: 10px 24px; font-size: 14px; border-radius: 6px; width: 100%;">Salvar Projeto</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     
-    <div id="page-relatorios" class="page" style="display:none"><h1 class="content-title">Relatórios</h1><p class="content-subtitle">Visualize relatórios de desempenho e produtividade.</p><div class="placeholder">Conteúdo de Relatórios será carregado aqui</div></div>
-    <div id="page-usuarios" class="page" style="display:none">
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h1 class="content-title">Usuários</h1>
-          <p class="content-subtitle">Gerencie usuários e permissões do sistema.</p>
-        </div>
-        <button class="btn btn-primary" id="btnNovoUsuario">Novo Usuário</button>
+    <div id="page-relatorios" class="page" style="display:none; width: 100%;">
+      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+        <h1 class="content-title">Relatórios</h1>
+        <p class="content-subtitle">Visualize relatórios de desempenho e produtividade.</p>
+        <div class="placeholder">Conteúdo de Relatórios será carregado aqui</div>
       </div>
-
-      <div id="formUsuario" class="card mb-4" style="display:none">
-        <h2 id="formUsuarioTitle">Novo Usuário</h2>
-        <div class="field">
-          <label>Nome de Usuário</label>
-          <input type="text" id="inputNomeUsuario" />
-        </div>
-        <div class="field">
-          <label>Senha</label>
-          <input type="password" id="inputSenhaUsuario" />
-        </div>
-        <div class="field">
-          <label>Perfil (Role)</label>
-          <select id="selectRoleUsuario">
-            <option value="operador">Operador</option>
-            <option value="gestor">Gestor</option>
-          </select>
-        </div>
-        <div class="flex gap-2">
-          <button class="btn btn-primary" id="btnSalvarUsuario">Salvar</button>
-          <button class="btn btn-secondary" id="btnCancelarUsuario">Cancelar</button>
-        </div>
-      </div>
-
-      <div id="listaUsuarios"></div>
     </div>
-  </div></div>
+
+    <div id="page-usuarios" class="page" style="display:none; flex-direction: row; gap: 24px; width: 100%;">
+      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+         <h1 class="content-title">Usuários</h1>
+         <p class="content-subtitle mb-4">Gerencie usuários e permissões do sistema.</p>
+         <div class="card" style="background: white; border: 1px solid #eef0f2; padding: 0;">
+            <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+              <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">👥 Usuários do Sistema</h2>
+            </div>
+            <div id="listaUsuarios" style="padding: 20px;"></div>
+         </div>
+      </div>
+
+      <div class="content" style="max-width: 35%; flex: 0 0 35%; margin: 0;">
+        <div id="formUsuario" class="card" style="background: #f8f9fa; border: 1px solid #eef0f2; padding: 0;">
+          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">Novo Usuário</h2>
+          </div>
+          <div style="padding: 24px;">
+            <div class="field">
+              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">Nome de Usuário</label>
+              <input type="text" id="inputNomeUsuario" style="background: white; border: 1px solid #ddd;" />
+            </div>
+            <div class="field">
+              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">Senha</label>
+              <input type="password" id="inputSenhaUsuario" style="background: white; border: 1px solid #ddd;" />
+            </div>
+            <div class="field">
+              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">Perfil (Role)</label>
+              <select id="selectRoleUsuario" style="background: white; border: 1px solid #ddd;">
+                <option value="operador">Operador</option>
+                <option value="gestor">Gestor</option>
+              </select>
+            </div>
+            <div class="flex mt-6">
+              <button class="btn btn-primary btn-lg" id="btnSalvarUsuario" style="background: var(--primary-500); padding: 10px 24px; font-size: 14px; border-radius: 6px; width: 100%;">Salvar Usuário</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
   function ativarPagina(page) {
     document.querySelectorAll('.nav-item').forEach(function (el) { el.classList.toggle('active', el.getAttribute('data-page') === page); });
     document.querySelectorAll('.page').forEach(function (el) { el.style.display = 'none'; });
-    document.getElementById('page-' + page).style.display = 'block';
+    
+    var targetPage = document.getElementById('page-' + page);
+    targetPage.style.display = 'flex';
+
+    // Se ativar OP, popular select de projetos
+    if (page === 'ops' && window.carregarProjetosParaSelect) {
+      window.carregarProjetosParaSelect();
+    }
   }
   document.getElementById('btnLogout').addEventListener('click', function () { sessionStorage.removeItem('usuario'); mostrarLogin(); });
   document.querySelectorAll('.nav-item').forEach(function (item) { item.addEventListener('click', function () { ativarPagina(this.getAttribute('data-page')); }); });
-
-  (function UsuariosModule() {
-    function carregarUsuarios() {
-      google.script.run.withSuccessHandler(function(res) {
-        if (res.sucesso) renderLista(res.usuarios);
-        else alert('Erro ao carregar usuários: ' + res.erro);
-      }).getUsuarios();
-    }
-
-    function renderLista(usuarios) {
-      if (usuarios.length === 0) {
-        document.getElementById('listaUsuarios').innerHTML = '<p class="text-muted">Nenhum usuário encontrado.</p>';
-        return;
-      }
-
-      var html = '<table><thead><tr><th>Nome</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead><tbody>';
-      usuarios.forEach(function(u) {
-        var statusBadge = u.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-error">Inativo</span>';
-        var statusBtnText = u.ativo ? 'Desativar' : 'Ativar';
-        var statusBtnClass = u.ativo ? 'btn-secondary' : 'btn-accent';
-
-        html += '<tr>' +
-          '<td>' + u.nome + '</td>' +
-          '<td>' + u.role + '</td>' +
-          '<td>' + statusBadge + '</td>' +
-          '<td>' +
-            '<div class="flex gap-1">' +
-              '<button class="btn ' + statusBtnClass + '" onclick="alternarStatusUsuario(' + u.id + ', ' + !u.ativo + ')">' + statusBtnText + '</button>' +
-              '<button class="btn btn-danger" onclick="removerUsuario(' + u.id + ')">Excluir</button>' +
-            '</div>' +
-          '</td>' +
-        '</tr>';
-      });
-      html += '</tbody></table>';
-      document.getElementById('listaUsuarios').innerHTML = html;
-    }
-
-    document.getElementById('btnNovoUsuario').addEventListener('click', function() {
-      document.getElementById('formUsuario').style.display = 'block';
-      document.getElementById('btnNovoUsuario').style.display = 'none';
-      document.getElementById('inputNomeUsuario').value = '';
-      document.getElementById('inputSenhaUsuario').value = '';
-    });
-
-    document.getElementById('btnCancelarUsuario').addEventListener('click', function() {
-      document.getElementById('formUsuario').style.display = 'none';
-      document.getElementById('btnNovoUsuario').style.display = 'block';
-    });
-
-    document.getElementById('btnSalvarUsuario').addEventListener('click', function() {
-      var data = {
-        nome: document.getElementById('inputNomeUsuario').value,
-        senha: document.getElementById('inputSenhaUsuario').value,
-        role: document.getElementById('selectRoleUsuario').value
-      };
-
-      if (!data.nome || !data.senha) {
-        alert('Nome e senha são obrigatórios.');
-        return;
-      }
-
-      var btn = this;
-      btn.disabled = true;
-      btn.innerText = 'Salvando...';
-
-      google.script.run.withSuccessHandler(function(res) {
-        btn.disabled = false;
-        btn.innerText = 'Salvar';
-        if (res.sucesso) {
-          carregarUsuarios();
-          document.getElementById('btnCancelarUsuario').click();
-        } else {
-          alert('Erro: ' + res.erro);
-        }
-      }).criarUsuarioNovo(data);
-    });
-
-    window.alternarStatusUsuario = function(id, novoStatus) {
-      google.script.run.withSuccessHandler(function(res) {
-        if (res.sucesso) carregarUsuarios();
-        else alert('Erro: ' + res.erro);
-      }).alternarStatusUsuario(id, novoStatus);
-    };
-
-    window.removerUsuario = function(id) {
-      if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
-      google.script.run.withSuccessHandler(function(res) {
-        if (res.sucesso) carregarUsuarios();
-        else alert('Erro: ' + res.erro);
-      }).removerUsuario(id);
-    };
-
-    carregarUsuarios();
-  })();
 
   (function OpsModule() {
     function carregarOps() {
       google.script.run.withSuccessHandler(function(res) {
         if (res.sucesso) renderListaOps(res.ops);
-        else alert('Erro ao carregar OPs: ' + res.erro);
+        else showToast('Erro ao carregar OPs: ' + res.erro, 'error');
       }).getOps();
+    }
+
+    function carregarProjetosParaSelect() {
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) {
+          var select = document.getElementById('selectProjetoOp');
+          select.innerHTML = res.projetos.map(function(p) { return '<option value="'+p.id+'">'+p.nome+'</option>' }).join('');
+        }
+      }).getProjetos();
     }
 
     function renderListaOps(ops) {
@@ -264,10 +228,10 @@
 
     function renderTabela(lista, podeCancelar) {
       if (lista.length === 0) return '<p class="text-muted">Nenhuma OP encontrada.</p>';
-      var html = '<table><thead><tr><th>Projeto</th><th>Status</th><th>Qtd</th><th>Ações</th></tr></thead><tbody>';
+      var html = '<table><thead><tr><th>Projeto</th><th>Status</th><th>Qtd</th><th style="text-align:right">Ações</th></tr></thead><tbody>';
       lista.forEach(function(o) {
-        html += '<tr><td>' + o.nome_projeto + '</td><td>' + o.status + '</td><td>' + o.quantidade_realizada + '/' + o.quantidade_total + '</td><td>';
-        if (podeCancelar) html += '<button class="btn btn-danger" onclick="cancelarOp(' + o.id + ')">Cancelar</button>';
+        html += '<tr><td><strong>' + o.nome_projeto + '</strong></td><td>' + o.status + '</td><td>' + o.quantidade_realizada + '/' + o.quantidade_total + '</td><td style="text-align:right">';
+        if (podeCancelar) html += '<button class="btn btn-danger btn-sm" onclick="cancelarOp(' + o.id + ')">Cancelar</button>';
         html += '</td></tr>';
       });
       return html + '</tbody></table>';
@@ -276,26 +240,13 @@
     window.cancelarOp = function(id) {
       if (!confirm('Deseja cancelar esta OP?')) return;
       google.script.run.withSuccessHandler(function(res) {
-        if (res.sucesso) carregarOps();
-        else alert('Erro: ' + res.erro);
+        if (res.sucesso) {
+          showToast('OP cancelada com sucesso', 'success');
+          carregarOps();
+        }
+        else showToast('Erro: ' + res.erro, 'error');
       }).cancelarOp(id);
     };
-
-    document.getElementById('btnNovaOp').addEventListener('click', function() {
-      google.script.run.withSuccessHandler(function(res) {
-        if (res.sucesso) {
-          var select = document.getElementById('selectProjetoOp');
-          select.innerHTML = res.projetos.map(function(p) { return '<option value="'+p.id+'">'+p.nome+'</option>' }).join('');
-          document.getElementById('formOp').style.display = 'block';
-          document.getElementById('btnNovaOp').style.display = 'none';
-        }
-      }).getProjetos();
-    });
-
-    document.getElementById('btnCancelarOp').addEventListener('click', function() {
-      document.getElementById('formOp').style.display = 'none';
-      document.getElementById('btnNovaOp').style.display = 'block';
-    });
 
     document.getElementById('btnSalvarOp').addEventListener('click', function() {
       var btn = this;
@@ -310,20 +261,25 @@
           btn.disabled = false;
           if (res.sucesso) {
             carregarOps();
-            document.getElementById('btnCancelarOp').click();
+            document.getElementById('inputQtdOp').value = '';
+            showToast('OP criada com sucesso!', 'success');
           } else {
-            alert('Erro: ' + res.erro);
+            showToast('Erro: ' + res.erro, 'error');
           }
         })
         .withFailureHandler(function(err) {
             btn.innerText = originalText;
             btn.disabled = false;
-            alert('Erro ao criar OP: ' + err);
+            showToast('Erro ao criar OP: ' + err, 'error');
         })
         .criarOp(data);
     });
 
     carregarOps();
+    carregarProjetosParaSelect();
+
+    // Expor para o roteador global
+    window.carregarProjetosParaSelect = carregarProjetosParaSelect;
   })();
 
   (function ProjetosModule() {
@@ -333,32 +289,35 @@
           if (res.sucesso) {
             renderLista(res.projetos);
           } else {
-            alert('Erro ao carregar projetos: ' + res.erro);
+            showToast('Erro ao carregar projetos: ' + res.erro, 'error');
           }
         })
         .getProjetos();
     }
 
     function renderLista(projetos) {
-      var html = '<table><thead><tr><th>Nome</th></tr></thead><tbody>';
+      if (projetos.length === 0) {
+        document.getElementById('listaProjetos').innerHTML = '<p class="text-muted">Nenhum projeto cadastrado ainda.</p>';
+        return;
+      }
+
+      var html = '<table><thead><tr><th>Projeto</th><th>Materiais</th><th>Tarefas</th><th style="text-align:right">Ações</th></tr></thead><tbody>';
       projetos.forEach(function(p) {
-        html += '<tr><td>' + p.nome + '</td></tr>';
+        var qtdMateriais = p.materiais ? p.materiais.length : 0;
+        var qtdTarefas = p.tarefas ? p.tarefas.length : 0;
+
+        html += '<tr>' +
+          '<td><strong>' + p.nome + '</strong></td>' +
+          '<td><span class="badge badge-info">' + qtdMateriais + '</span></td>' +
+          '<td><span class="badge badge-success">' + qtdTarefas + '</span></td>' +
+          '<td style="text-align:right">' +
+            '<button class="btn btn-secondary btn-sm" onclick="showToast(\'Edição em breve\', \'info\')">Ver</button>' +
+          '</td>' +
+        '</tr>';
       });
       html += '</tbody></table>';
       document.getElementById('listaProjetos').innerHTML = html;
     }
-
-    document.getElementById('btnNovoProjeto').addEventListener('click', function() {
-      document.getElementById('listaProjetos').style.display = 'none';
-      document.getElementById('btnNovoProjeto').style.display = 'none';
-      document.getElementById('formProjeto').style.display = 'block';
-    });
-
-    document.getElementById('btnCancelarProjeto').addEventListener('click', function() {
-      document.getElementById('listaProjetos').style.display = 'block';
-      document.getElementById('btnNovoProjeto').style.display = 'block';
-      document.getElementById('formProjeto').style.display = 'none';
-    });
 
     document.getElementById('btnSalvarProjeto').addEventListener('click', function() {
       var btn = this;
@@ -379,31 +338,48 @@
         })).filter(t => t.nome)
       };
 
+      if (data.materiais.length === 0 || data.tarefas.length === 0) {
+        showToast('O projeto deve ter no mínimo 1 material e 1 tarefa.', 'warning');
+        btn.innerText = originalText;
+        btn.disabled = false;
+        return;
+      }
+
       google.script.run
         .withSuccessHandler(function(res) {
           btn.innerText = originalText;
           btn.disabled = false;
           if (res.sucesso) {
-            alert('Projeto criado!');
+            showToast('Projeto criado!', 'success');
+            resetarFormProjeto();
             carregarProjetos();
-            document.getElementById('btnCancelarProjeto').click();
+            // Atualizar select de OPs se estiver na outra aba
+            if (window.carregarProjetosParaSelect) carregarProjetosParaSelect();
           } else {
-            alert('Erro: ' + res.erro);
+            showToast('Erro: ' + res.erro, 'error');
           }
         })
         .withFailureHandler(function(err) {
             btn.innerText = originalText;
             btn.disabled = false;
-            alert('Erro ao salvar: ' + err);
+            showToast('Erro ao salvar: ' + err, 'error');
         })
         .criarProjeto(data);
     });
+
+    function resetarFormProjeto() {
+      document.getElementById('inputNomeProjeto').value = '';
+      document.getElementById('materiaisList').innerHTML = '<li class="dynamic-item" style="gap: 8px; margin-bottom: 8px;"><input type="text" placeholder="Nome" class="mat-nome" style="background: white; border: 1px solid #ddd;" /><input type="text" placeholder="Qtd" class="mat-qtd" style="background: white; border: 1px solid #ddd; max-width: 60px;" /><button class="btn btn-sm" onclick="removeDynamicField(this)" style="color: #c0392b; background: transparent; font-weight: bold;">X</button></li>';
+      document.getElementById('tarefasList').innerHTML = '<li class="dynamic-item" style="flex-direction: column; align-items: stretch; background: white; border: 1px solid #eee; padding: 12px; border-radius: 8px; position: relative; margin-bottom: 12px;"><button class="btn btn-sm" onclick="removeDynamicField(this)" style="position: absolute; top: 5px; right: 5px; color: #c0392b; background: transparent;">X</button><input type="text" placeholder="Título" class="tar-nome mb-2" style="background: white; border: 1px solid #ddd; font-size: 12px;" /><textarea placeholder="Instrução" class="tar-desc" style="background: white; border: 1px solid #ddd; min-height: 40px; font-size: 11px;"></textarea><textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2" style="background: white; border: 1px solid #ddd; font-size: 11px;"></textarea></li>';
+    }
 
     window.addMaterialField = function() {
       var ul = document.getElementById('materiaisList');
       var li = document.createElement('li');
       li.className = 'dynamic-item';
-      li.innerHTML = '<input type="text" placeholder="Nome" class="mat-nome" /> <input type="text" placeholder="Qtd" class="mat-qtd" /> <button class="btn btn-danger" onclick="removeDynamicField(this)">x</button>';
+      li.style.gap = '8px';
+      li.style.marginBottom = '8px';
+      li.innerHTML = '<input type="text" placeholder="Nome" class="mat-nome" style="background: white; border: 1px solid #ddd;" /> <input type="text" placeholder="Qtd" class="mat-qtd" style="background: white; border: 1px solid #ddd; max-width: 60px;" /> <button class="btn btn-sm" onclick="removeDynamicField(this)" style="color: #c0392b; background: transparent; font-weight: bold;">X</button>';
       ul.appendChild(li);
     };
     
@@ -411,25 +387,118 @@
       var ul = document.getElementById('tarefasList');
       var li = document.createElement('li');
       li.className = 'dynamic-item';
-      li.style.flexDirection = 'column'; // Adjust layout for textarea
-      li.style.alignItems = 'flex-start';
+      li.style.flexDirection = 'column';
+      li.style.alignItems = 'stretch';
+      li.style.background = 'white';
+      li.style.border = '1px solid #eee';
+      li.style.padding = '12px';
+      li.style.borderRadius = '8px';
+      li.style.position = 'relative';
+      li.style.marginBottom = '12px';
       li.innerHTML = `
-        <div style="width:100%; display:flex; gap:8px;">
-            <input type="text" placeholder="Nome" class="tar-nome" />
-            <input type="text" placeholder="Descrição" class="tar-desc" />
-            <button class="btn btn-danger" onclick="removeDynamicField(this)">x</button>
-        </div>
-        <textarea placeholder="Links (um por linha)" class="tar-links" style="margin-top:8px;"></textarea>
+        <button class="btn btn-sm" onclick="removeDynamicField(this)" style="position: absolute; top: 5px; right: 5px; color: #c0392b; background: transparent;">X</button>
+        <input type="text" placeholder="Título" class="tar-nome mb-2" style="background: white; border: 1px solid #ddd; font-size: 12px;" />
+        <textarea placeholder="Instrução" class="tar-desc" style="background: white; border: 1px solid #ddd; min-height: 40px; font-size: 11px;"></textarea>
+        <textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2" style="background: white; border: 1px solid #ddd; font-size: 11px;"></textarea>
       `;
       ul.appendChild(li);
     };
 
     window.removeDynamicField = function(btn) {
-      // If nested inside a column layout, look for the parent LI
       var item = btn.closest('.dynamic-item');
       if (item) item.remove();
     };
 
     carregarProjetos();
+  })();
+
+  (function UsuariosModule() {
+    function carregarUsuarios() {
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) renderLista(res.usuarios);
+        else showToast('Erro ao carregar usuários: ' + res.erro, 'error');
+      }).getUsuarios();
+    }
+
+    function renderLista(usuarios) {
+      if (usuarios.length === 0) {
+        document.getElementById('listaUsuarios').innerHTML = '<p class="text-muted">Nenhum usuário encontrado.</p>';
+        return;
+      }
+
+      var html = '<table><thead><tr><th>Nome</th><th>Perfil</th><th>Status</th><th style="text-align:right">Ações</th></tr></thead><tbody>';
+      usuarios.forEach(function(u) {
+        var statusBadge = u.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-error">Inativo</span>';
+        var statusBtnText = u.ativo ? 'Desativar' : 'Ativar';
+        var statusBtnClass = u.ativo ? 'btn-secondary' : 'btn-accent';
+
+        html += '<tr>' +
+          '<td><strong>' + u.nome + '</strong></td>' +
+          '<td>' + u.role + '</td>' +
+          '<td>' + statusBadge + '</td>' +
+          '<td style="text-align:right">' +
+            '<div class="flex gap-1 justify-end">' +
+              '<button class="btn btn-sm ' + statusBtnClass + '" onclick="alternarStatusUsuario(' + u.id + ', ' + !u.ativo + ')">' + statusBtnText + '</button>' +
+              '<button class="btn btn-danger btn-sm" onclick="removerUsuario(' + u.id + ')">Excluir</button>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('listaUsuarios').innerHTML = html;
+    }
+
+    document.getElementById('btnSalvarUsuario').addEventListener('click', function() {
+      var data = {
+        nome: document.getElementById('inputNomeUsuario').value,
+        senha: document.getElementById('inputSenhaUsuario').value,
+        role: document.getElementById('selectRoleUsuario').value
+      };
+
+      if (!data.nome || !data.senha) {
+        showToast('Nome e senha são obrigatórios.', 'warning');
+        return;
+      }
+
+      var btn = this;
+      btn.disabled = true;
+      btn.innerText = 'Salvando...';
+
+      google.script.run.withSuccessHandler(function(res) {
+        btn.disabled = false;
+        btn.innerText = 'Salvar Usuário';
+        if (res.sucesso) {
+          showToast('Usuário criado com sucesso!', 'success');
+          document.getElementById('inputNomeUsuario').value = '';
+          document.getElementById('inputSenhaUsuario').value = '';
+          carregarUsuarios();
+        } else {
+          showToast('Erro: ' + res.erro, 'error');
+        }
+      }).criarUsuarioNovo(data);
+    });
+
+    window.alternarStatusUsuario = function(id, novoStatus) {
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) {
+          showToast('Status atualizado', 'success');
+          carregarUsuarios();
+        }
+        else showToast('Erro: ' + res.erro, 'error');
+      }).alternarStatusUsuario(id, novoStatus);
+    };
+
+    window.removerUsuario = function(id) {
+      if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+      google.script.run.withSuccessHandler(function(res) {
+        if (res.sucesso) {
+          showToast('Usuário removido', 'success');
+          carregarUsuarios();
+        }
+        else showToast('Erro: ' + res.erro, 'error');
+      }).removerUsuario(id);
+    };
+
+    carregarUsuarios();
   })();
 </script>

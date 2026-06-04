@@ -37,34 +37,44 @@ function getProjetos() {
   }
 }
 
+function getProjeto(id) {
+  try {
+    return { sucesso: true, projeto: ProjetosDB.getById(parseInt(id)) };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
 function criarProjeto(data) {
   try {
-    // 1. Criar o projeto base
-    var projeto = ProjetosDB.criar({ nome: data.nome });
-    
-    // 2. Criar e associar materiais
-    if (data.materiais) {
-      data.materiais.forEach(function(mat) {
-        MateriaisDB.criar({ 
-          projeto_id: projeto.id, 
-          nome: mat.nome, 
-          quantidade: mat.quantidade 
-        });
-      });
+    // Validação de integridade
+    if (!data.nome || data.nome.trim() === '') {
+      throw new Error('O nome do projeto é obrigatório.');
     }
-    
-    // 3. Criar e associar tarefas
-    if (data.tarefas) {
-      data.tarefas.forEach(function(tar, index) {
-        TarefasDB.criar({ 
-          projeto_id: projeto.id, 
-          nome: tar.nome, 
+    if (!data.materiais || data.materiais.length === 0) {
+      throw new Error('O projeto deve ter no mínimo 1 material.');
+    }
+    if (!data.tarefas || data.tarefas.length === 0) {
+      throw new Error('O projeto deve ter no mínimo 1 tarefa.');
+    }
+
+    // 1. Preparar o projeto com materiais e tarefas integrados
+    var projetoParaCriar = {
+      nome: data.nome,
+      materiais: data.materiais || [],
+      tarefas: (data.tarefas || []).map(function(tar, index) {
+        return {
+          id: Date.now() + index,
+          nome: tar.nome,
           ordem: index + 1,
           descricao: tar.descricao,
           links: tar.links ? tar.links.split('\n').filter(function(l){ return l.trim() !== ''; }) : []
-        });
-      });
-    }
+        };
+      })
+    };
+
+    // 2. Escrita única (Atômica)
+    var projeto = ProjetosDB.criar(projetoParaCriar);
 
     return { sucesso: true, projeto: projeto };
   } catch (erro) {
@@ -149,6 +159,55 @@ function removerUsuario(id) {
   } catch (erro) {
     return { sucesso: false, erro: erro.message };
   }
+}
+
+/**
+ * Registra um lote de eventos de uma só vez (Transacional)
+ * @param {Array} eventos - Lista de eventos
+ * @returns {Object} Resultado
+ */
+function registrarLoteEventos(eventos) {
+  try {
+    if (!eventos || eventos.length === 0) return { sucesso: true };
+
+    var todosEventos = EventosDB.listar();
+    var conclusao = null;
+
+    eventos.forEach(function(e) {
+      e.id = e.id || (Date.now() + Math.floor(Math.random() * 1000));
+      if (e.tipo === 'conclusao') conclusao = e;
+      todosEventos.push(e);
+    });
+
+    // Escrita única no Drive - Corrigido de EventosDB.write para DB.write
+    DB.write('eventos', todosEventos);
+
+    // Se houve conclusão no lote, atualizar progresso da OP
+    if (conclusao) {
+      var op = OpsDB.getById(parseInt(conclusao.op_id));
+      var projeto = ProjetosDB.getById(op.projeto_id);
+      
+      if (projeto.tarefas && projeto.tarefas.length > 0) {
+        var ultimaTarefa = projeto.tarefas[projeto.tarefas.length - 1];
+        if (ultimaTarefa.id == conclusao.tarefa_id) {
+          OpsDB.atualizar(op.id, { 
+            quantidade_realizada: (op.quantidade_realizada || 0) + 1,
+            status: (op.quantidade_realizada + 1 >= op.quantidade_total) ? 'finalizada' : 'em andamento'
+          });
+        } else if (op.status === 'aberta') {
+          OpsDB.atualizar(op.id, { status: 'em andamento' });
+        }
+      }
+    }
+
+    return { sucesso: true };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
+function registrarEvento(data) {
+  return registrarLoteEventos([data]);
 }
 
 function doPost(e) {
