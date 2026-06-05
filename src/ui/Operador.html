@@ -216,9 +216,12 @@
     // --- LOGICA DE EVENTOS (TRANSACIONAL) ---
 
     function adicionarEventoAoBuffer(tipo, obs) {
+        var user = JSON.parse(sessionStorage.getItem('usuario')) || { id: 0, nome: 'Desconhecido' };
         var evento = {
             op_id: opSelecionada.id,
             tarefa_id: projetoAtual.tarefas[tarefaIndice].id,
+            usuario_id: user.id,
+            usuario_nome: user.nome,
             tipo: tipo,
             timestamp_inicio: new Date().toISOString(),
             observacao: obs || '',
