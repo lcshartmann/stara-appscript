@@ -90,6 +90,14 @@ function getOps() {
   }
 }
 
+function getEventos() {
+  try {
+    return { sucesso: true, eventos: EventosDB.listar() };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
 function criarOp(data) {
   try {
     var projeto = ProjetosDB.getById(parseInt(data.projeto_id));
@@ -208,6 +216,92 @@ function registrarLoteEventos(eventos) {
 
 function registrarEvento(data) {
   return registrarLoteEventos([data]);
+}
+
+/**
+ * Função Utilitária para gerar dados de teste e visualizar o Dashboard
+ */
+function gerarDadosMock() {
+  try {
+    // 1. Garantir que temos um operador para assinar os eventos
+    var usuarios = UsuariosDB.listar();
+    var operador = usuarios.find(u => u.role === 'operador') || usuarios[0];
+    
+    if (!operador) {
+      operador = AuthService.criarUsuario('Operador Teste', '123', 'operador');
+    }
+
+    // 2. Criar um Projeto Robusto
+    var projetoData = {
+      nome: "🚜 Montagem Trator ST-500 (MOCK)",
+      materiais: [
+        { nome: "Chassi Reforçado", quantidade: "1" },
+        { nome: "Motor Diesel 150cv", quantidade: "1" },
+        { nome: "Rodas Aro 32", quantidade: "4" }
+      ],
+      tarefas: [
+        { nome: "Preparação do Chassi", descricao: "Limpeza e inspeção inicial.", links: "" },
+        { nome: "Instalação do Motor", descricao: "Acoplamento e torque dos parafusos.", links: "" },
+        { nome: "Pintura e Acabamento", descricao: "Aplicação de verniz protetivo.", links: "" }
+      ]
+    };
+    var resProjeto = criarProjeto(projetoData);
+    var projeto = resProjeto.projeto;
+
+    // 3. Criar 2 OPs
+    var op1 = criarOp({ projeto_id: projeto.id, quantidade: 5 }).op;
+    var op2 = criarOp({ projeto_id: projeto.id, quantidade: 2 }).op;
+
+    // 4. Gerar Eventos para a OP 1 (Tarefa 1 Completa com Pausa)
+    var agora = new Date();
+    var t1 = projeto.tarefas[0];
+    var t2 = projeto.tarefas[1];
+
+    var eventosOP1 = [
+      {
+        op_id: op1.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
+        tipo: 'inicio', timestamp_inicio: new Date(agora.getTime() - 3600000).toISOString()
+      },
+      {
+        op_id: op1.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
+        tipo: 'pausa', timestamp_inicio: new Date(agora.getTime() - 3000000).toISOString(), observacao: 'Ajuste de ferramenta'
+      },
+      {
+        op_id: op1.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
+        tipo: 'retomada', timestamp_inicio: new Date(agora.getTime() - 2500000).toISOString()
+      },
+      {
+        op_id: op1.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
+        tipo: 'conclusao', timestamp_inicio: new Date(agora.getTime() - 2000000).toISOString(), 
+        duracao_segundos: 1600, observacao: 'Execução perfeita'
+      },
+      // Início da tarefa 2
+      {
+        op_id: op1.id, tarefa_id: t2.id, usuario_id: operador.id, usuario_nome: operador.nome,
+        tipo: 'inicio', timestamp_inicio: new Date(agora.getTime() - 1500000).toISOString()
+      }
+    ];
+
+    // 5. Gerar Eventos para a OP 2 (Tarefa 1 Direta)
+    var eventosOP2 = [
+      {
+        op_id: op2.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
+        tipo: 'inicio', timestamp_inicio: new Date(agora.getTime() - 5000000).toISOString()
+      },
+      {
+        op_id: op2.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
+        tipo: 'conclusao', timestamp_inicio: new Date(agora.getTime() - 4000000).toISOString(), 
+        duracao_segundos: 1000
+      }
+    ];
+
+    registrarLoteEventos(eventosOP1);
+    registrarLoteEventos(eventosOP2);
+
+    return { sucesso: true, mensagem: "Dados Mock gerados com sucesso para " + operador.nome };
+  } catch (e) {
+    return { sucesso: false, erro: e.message };
+  }
 }
 
 function doPost(e) {
