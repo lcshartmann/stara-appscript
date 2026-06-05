@@ -130,11 +130,64 @@
       </div>
     </div>
     
-    <div id="page-relatorios" class="page" style="display:none; width: 100%;">
+    <div id="page-relatorios" class="page" style="display:none; flex-direction: column; width: 100%;">
       <div class="content" style="flex: 1; margin: 0; max-width: none;">
-        <h1 class="content-title">Relatórios</h1>
-        <p class="content-subtitle">Visualize relatórios de desempenho e produtividade.</p>
-        <div class="placeholder">Conteúdo de Relatórios será carregado aqui</div>
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="content-title">Relatórios Operacionais</h1>
+            <p class="content-subtitle">Inteligência e análise de desempenho da produção.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="RelatoriosModule.inicializar()">🔄 Atualizar Dados</button>
+        </div>
+
+        <!-- Dashboard de Cards -->
+        <div class="flex gap-4 mb-8">
+          <div class="card" style="flex: 1; background: #e3f2fd; border: none; padding: 24px;">
+            <div style="font-size: 12px; font-weight: 700; color: #1565c0; text-transform: uppercase;">OPs Finalizadas</div>
+            <div id="metric-ops-finalizadas" style="font-size: 32px; font-weight: 700; color: #0d47a1;">0</div>
+          </div>
+          <div class="card" style="flex: 1; background: #e8f5e9; border: none; padding: 24px;">
+            <div style="font-size: 12px; font-weight: 700; color: #2e7d32; text-transform: uppercase;">Eficiência Média</div>
+            <div id="metric-eficiencia" style="font-size: 32px; font-weight: 700; color: #1b5e20;">--</div>
+          </div>
+          <div class="card" style="flex: 1; background: #fff3e0; border: none; padding: 24px;">
+            <div style="font-size: 12px; font-weight: 700; color: #ef6c00; text-transform: uppercase;">Tempo Médio / Tarefa</div>
+            <div id="metric-tempo-medio" style="font-size: 32px; font-weight: 700; color: #e65100;">0m</div>
+          </div>
+          <div class="card" style="flex: 1; background: #fce4ec; border: none; padding: 24px;">
+            <div style="font-size: 12px; font-weight: 700; color: #c2185b; text-transform: uppercase;">Eventos Registrados</div>
+            <div id="metric-eventos" style="font-size: 32px; font-weight: 700; color: #880e4f;">0</div>
+          </div>
+        </div>
+
+        <div class="flex gap-6">
+          <!-- Coluna Esquerda: Timeline -->
+          <div style="flex: 1.5;">
+            <div class="card" style="padding: 0; min-height: 400px;">
+              <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 16px; margin: 0; font-weight: 600;">📊 Timeline da Ordem de Produção</h2>
+                <select id="selectOpTimeline" style="width: auto; padding: 4px 10px; font-size: 12px;" onchange="RelatoriosModule.carregarTimeline(this.value)">
+                  <option value="">Selecione uma OP...</option>
+                </select>
+              </div>
+              <div id="containerTimeline" style="padding: 24px;">
+                <div class="placeholder">Selecione uma OP acima para visualizar a linha do tempo.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coluna Direita: Ranking -->
+          <div style="flex: 1;">
+            <div class="card" style="padding: 0;">
+              <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+                <h2 style="font-size: 16px; margin: 0; font-weight: 600;">🏆 Ranking de Execução</h2>
+              </div>
+              <div id="containerRanking" style="padding: 20px;">
+                <div class="placeholder">Aguardando dados...</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -501,4 +554,125 @@
 
     carregarUsuarios();
   })();
+
+  var RelatoriosModule = (function() {
+    var dadosCache = {
+      eventos: [],
+      ops: [],
+      usuarios: []
+    };
+
+    function inicializar() {
+      showToast('Processando inteligência de dados...', 'info');
+      
+      google.script.run.withSuccessHandler(function(resEventos) {
+        dadosCache.eventos = resEventos.eventos;
+        
+        google.script.run.withSuccessHandler(function(resOps) {
+          dadosCache.ops = resOps.ops;
+          processarDashboard();
+          popularSelectTimeline();
+          renderizarRanking();
+        }).getOps();
+
+      }).getEventos();
+    }
+
+    function processarDashboard() {
+      var finalizadas = dadosCache.ops.filter(o => o.status === 'finalizada').length;
+      document.getElementById('metric-ops-finalizadas').innerText = finalizadas;
+      document.getElementById('metric-eventos').innerText = dadosCache.eventos.length;
+
+      // Calcular Tempo Médio por Tarefa (Apenas eventos de conclusão)
+      var eventosConclusao = dadosCache.eventos.filter(e => e.tipo === 'conclusao');
+      if (eventosConclusao.length > 0) {
+        var totalSegundos = eventosConclusao.reduce((acc, e) => acc + (e.duracao_segundos || 0), 0);
+        var mediaMinutos = Math.round(totalSegundos / eventosConclusao.length / 60);
+        document.getElementById('metric-tempo-medio').innerText = mediaMinutos + 'm';
+        document.getElementById('metric-eficiencia').innerText = '🔥 Alta';
+      }
+    }
+
+    function popularSelectTimeline() {
+      var select = document.getElementById('selectOpTimeline');
+      var options = '<option value="">Selecione uma OP...</option>';
+      dadosCache.ops.forEach(o => {
+        options += `<option value="${o.id}">OP #${o.id} - ${o.nome_projeto}</option>`;
+      });
+      select.innerHTML = options;
+    }
+
+    function carregarTimeline(opId) {
+      if (!opId) return;
+      var container = document.getElementById('containerTimeline');
+      var eventosOp = dadosCache.eventos.filter(e => e.op_id == opId);
+      
+      if (eventosOp.length === 0) {
+        container.innerHTML = '<div class="placeholder">Nenhum evento registrado para esta OP.</div>';
+        return;
+      }
+
+      // Ordenar por timestamp
+      eventosOp.sort((a, b) => new Date(a.timestamp_inicio) - new Date(b.timestamp_inicio));
+
+      var html = '<div style="border-left: 2px solid #eee; padding-left: 20px; margin-left: 10px;">';
+      eventosOp.forEach(e => {
+        var cor = '#4a77d4';
+        if (e.tipo === 'pausa') cor = '#f9a825';
+        if (e.tipo === 'conclusao') cor = '#1db954';
+        
+        var dataHora = new Date(e.timestamp_inicio).toLocaleTimeString();
+        
+        html += `
+          <div style="position: relative; margin-bottom: 24px;">
+            <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: ${cor}; border: 2px solid white;"></div>
+            <div style="font-size: 11px; color: #999; margin-bottom: 2px;">${dataHora} • ${e.usuario_nome || 'Sistema'}</div>
+            <div style="font-weight: 600; text-transform: uppercase; font-size: 13px;">${e.tipo}</div>
+            <div style="font-size: 14px; color: #555;">${e.observacao ? '💬 ' + e.observacao : ''}</div>
+            ${e.duracao_segundos > 0 ? `<div class="badge badge-info" style="margin-top:4px">Tempo: ${Math.round(e.duracao_segundos/60)} min</div>` : ''}
+          </div>
+        `;
+      });
+      container.innerHTML = html + '</div>';
+    }
+
+    function renderizarRanking() {
+      var contagem = {};
+      
+      // Filtrar apenas eventos de conclusão para o ranking
+      dadosCache.eventos.filter(e => e.tipo === 'conclusao').forEach(e => {
+        var nome = e.usuario_nome || 'Desconhecido';
+        contagem[nome] = (contagem[nome] || 0) + 1;
+      });
+
+      // Transformar em array e ordenar
+      var ranking = Object.keys(contagem).map(nome => {
+        return { nome: nome, total: contagem[nome] };
+      }).sort((a, b) => b.total - a.total);
+      
+      if (ranking.length === 0) {
+        document.getElementById('containerRanking').innerHTML = '<div class="placeholder">Nenhuma tarefa concluída para o ranking.</div>';
+        return;
+      }
+
+      var html = '<table><thead><tr><th>Operador</th><th style="text-align:right">Tarefas</th></tr></thead><tbody>';
+      ranking.forEach(r => {
+          html += `<tr><td><strong>${r.nome}</strong></td><td style="text-align:right"><span class="badge badge-success">${r.total}</span></td></tr>`;
+      });
+      
+      document.getElementById('containerRanking').innerHTML = html + '</tbody></table>';
+    }
+
+    return {
+      inicializar: inicializar,
+      carregarTimeline: carregarTimeline
+    };
+  })();
+
+  // Hook no ativador de página
+  var originalAtivarPagina = ativarPagina;
+  ativarPagina = function(page) {
+    originalAtivarPagina(page);
+    if (page === 'relatorios') RelatoriosModule.inicializar();
+  };
 </script>
