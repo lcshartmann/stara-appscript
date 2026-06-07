@@ -98,6 +98,20 @@ function getEventos() {
   }
 }
 
+function getDadosRelatorio() {
+  try {
+    return {
+      sucesso: true,
+      eventos: EventosDB.listar(),
+      ops: OpsDB.listar(),
+      projetos: ProjetosDB.listar(),
+      usuarios: UsuariosDB.listar()
+    };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
 function criarOp(data) {
   try {
     var projeto = ProjetosDB.getById(parseInt(data.projeto_id));
@@ -218,87 +232,171 @@ function registrarEvento(data) {
   return registrarLoteEventos([data]);
 }
 
+function limparEventos() {
+  try {
+    DB.write('eventos', []);
+    return { sucesso: true, mensagem: 'Todos os eventos foram removidos.' };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
+function limparOps() {
+  try {
+    DB.write('ops', []);
+    return { sucesso: true, mensagem: 'Todas as OPs foram removidas.' };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
+function limparProjetos() {
+  try {
+    DB.write('projetos', []);
+    return { sucesso: true, mensagem: 'Todos os projetos foram removidos.' };
+  } catch (erro) {
+    return { sucesso: false, erro: erro.message };
+  }
+}
+
 /**
  * Função Utilitária para gerar dados de teste e visualizar o Dashboard
  */
 function gerarDadosMock() {
   try {
-    // 1. Garantir que temos um operador para assinar os eventos
+    // ===== 1. Garantir operadores com diferentes perfis =====
     var usuarios = UsuariosDB.listar();
-    var operador = usuarios.find(u => u.role === 'operador') || usuarios[0];
-    
-    if (!operador) {
-      operador = AuthService.criarUsuario('Operador Teste', '123', 'operador');
-    }
+    var joao = usuarios.find(function(u) { return u.nome === 'João Silva'; }) || AuthService.criarUsuario('João Silva', '123', 'operador');
+    var maria = usuarios.find(function(u) { return u.nome === 'Maria Santos'; }) || AuthService.criarUsuario('Maria Santos', '123', 'operador');
+    var carlos = usuarios.find(function(u) { return u.nome === 'Carlos Oliveira'; }) || AuthService.criarUsuario('Carlos Oliveira', '123', 'operador');
 
-    // 2. Criar um Projeto Robusto
-    var projetoData = {
-      nome: "🚜 Montagem Trator ST-500 (MOCK)",
+    // ===== 2. Criar 2 Projetos =====
+    var proj1 = criarProjeto({
+      nome: '🚜 Montagem Trator ST-500',
       materiais: [
-        { nome: "Chassi Reforçado", quantidade: "1" },
-        { nome: "Motor Diesel 150cv", quantidade: "1" },
-        { nome: "Rodas Aro 32", quantidade: "4" }
+        { nome: 'Chassi Reforçado', quantidade: '1' },
+        { nome: 'Motor Diesel 150cv', quantidade: '1' },
+        { nome: 'Rodas Aro 32', quantidade: '4' }
       ],
       tarefas: [
-        { nome: "Preparação do Chassi", descricao: "Limpeza e inspeção inicial.", links: "" },
-        { nome: "Instalação do Motor", descricao: "Acoplamento e torque dos parafusos.", links: "" },
-        { nome: "Pintura e Acabamento", descricao: "Aplicação de verniz protetivo.", links: "" }
+        { nome: 'Preparação do Chassi', descricao: 'Limpeza e inspeção inicial.', links: '' },
+        { nome: 'Instalação do Motor', descricao: 'Acoplamento e torque dos parafusos.', links: '' },
+        { nome: 'Pintura e Acabamento', descricao: 'Aplicação de verniz protetivo.', links: '' }
       ]
-    };
-    var resProjeto = criarProjeto(projetoData);
-    var projeto = resProjeto.projeto;
+    }).projeto;
 
-    // 3. Criar 2 OPs
-    var op1 = criarOp({ projeto_id: projeto.id, quantidade: 5 }).op;
-    var op2 = criarOp({ projeto_id: projeto.id, quantidade: 2 }).op;
+    var proj2 = criarProjeto({
+      nome: '🌾 Colheitadeira CX-2000',
+      materiais: [
+        { nome: 'Plataforma de Corte', quantidade: '1' },
+        { nome: 'Sistema de Trilha', quantidade: '1' },
+        { nome: 'Tanque Graneleiro', quantidade: '1' },
+        { nome: 'Motor Diesel 250cv', quantidade: '1' }
+      ],
+      tarefas: [
+        { nome: 'Montagem da Plataforma', descricao: 'Fixação da plataforma de corte.', links: '' },
+        { nome: 'Instalação do Sistema de Trilha', descricao: 'Ajuste dos cilindros de trilha.', links: '' },
+        { nome: 'Montagem do Tanque', descricao: 'Instalação do tanque graneleiro.', links: '' },
+        { nome: 'Calibração Final', descricao: 'Testes e calibração dos sistemas.', links: '' }
+      ]
+    }).projeto;
 
-    // 4. Gerar Eventos para a OP 1 (Tarefa 1 Completa com Pausa)
-    var agora = new Date();
-    var t1 = projeto.tarefas[0];
-    var t2 = projeto.tarefas[1];
+    // ===== 3. Criar OPs =====
+    var agora = Date.now();
+    var DAY = 86400000;
 
-    var eventosOP1 = [
-      {
-        op_id: op1.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
-        tipo: 'inicio', timestamp_inicio: new Date(agora.getTime() - 3600000).toISOString()
-      },
-      {
-        op_id: op1.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
-        tipo: 'pausa', timestamp_inicio: new Date(agora.getTime() - 3000000).toISOString(), observacao: 'Ajuste de ferramenta'
-      },
-      {
-        op_id: op1.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
-        tipo: 'retomada', timestamp_inicio: new Date(agora.getTime() - 2500000).toISOString()
-      },
-      {
-        op_id: op1.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
-        tipo: 'conclusao', timestamp_inicio: new Date(agora.getTime() - 2000000).toISOString(), 
-        duracao_segundos: 1600, observacao: 'Execução perfeita'
-      },
-      // Início da tarefa 2
-      {
-        op_id: op1.id, tarefa_id: t2.id, usuario_id: operador.id, usuario_nome: operador.nome,
-        tipo: 'inicio', timestamp_inicio: new Date(agora.getTime() - 1500000).toISOString()
+    // OP1: Trator, 3 unidades — COMPLETA
+    var op1 = criarOp({ projeto_id: proj1.id, quantidade: 3 }).op;
+    // OP2: Trator, 2 unidades — EM ANDAMENTO
+    var op2 = criarOp({ projeto_id: proj1.id, quantidade: 2 }).op;
+    // OP3: Colheitadeira, 4 unidades — COMPLETA
+    var op3 = criarOp({ projeto_id: proj2.id, quantidade: 4 }).op;
+    // OP4: Colheitadeira, 5 unidades — ABERTA (sem eventos)
+    criarOp({ projeto_id: proj2.id, quantidade: 5 });
+
+    // ===== 4. Helper de evento =====
+    function montarEvento(opId, tarefa, projetoId, usuario, tipo, timestamp, obs, duracao) {
+      var e = {
+        op_id: opId,
+        tarefa_id: tarefa.id,
+        tarefa_nome: tarefa.nome,
+        projeto_id: projetoId,
+        usuario_id: usuario.id,
+        usuario_nome: usuario.nome,
+        tipo: tipo,
+        timestamp_inicio: new Date(timestamp).toISOString()
+      };
+      if (obs) e.observacao = obs;
+      if (duracao != null) e.duracao_segundos = duracao;
+      return e;
+    }
+
+    // ===== 5. Helper: ciclo completo de tarefas para uma unidade =====
+    function cicloCompleto(opId, projeto, tarefas, usuario, timeStart, activeSec, hasPause) {
+      var eventos = [];
+      var t = timeStart;
+      for (var i = 0; i < tarefas.length; i++) {
+        var tarefa = tarefas[i];
+        var pausar = hasPause && i > 0;
+
+        eventos.push(montarEvento(opId, tarefa, projeto.id, usuario, 'inicio', t));
+
+        if (pausar) {
+          t += Math.round(activeSec * 0.4) * 1000;
+          eventos.push(montarEvento(opId, tarefa, projeto.id, usuario, 'pausa', t, 'Pausa para ajuste técnico'));
+          t += Math.round(activeSec * 0.2) * 1000;
+          eventos.push(montarEvento(opId, tarefa, projeto.id, usuario, 'retomada', t));
+          t += Math.round(activeSec * 0.6) * 1000;
+        } else {
+          t += activeSec * 1000;
+        }
+
+        eventos.push(montarEvento(opId, tarefa, projeto.id, usuario, 'conclusao', t, 'Execução concluída', activeSec));
+        t += 120000; // 2 min gap entre tarefas
       }
+      return eventos;
+    }
+
+    // ===== 6. Gerar eventos =====
+
+    // -- OP1: Trator, 3 unidades, João, Maria, Carlos --
+    var ciclos1 = [
+      { usr: joao, sec: 700, pause: false, base: -7 * DAY },
+      { usr: maria, sec: 1100, pause: true, base: -6.4 * DAY },
+      { usr: carlos, sec: 2000, pause: true, base: -5.5 * DAY }
     ];
+    for (var c1 = 0; c1 < ciclos1.length; c1++) {
+      var cl = ciclos1[c1];
+      var evts = cicloCompleto(op1.id, proj1, proj1.tarefas, cl.usr, agora + cl.base, cl.sec, cl.pause);
+      registrarLoteEventos(evts);
+    }
 
-    // 5. Gerar Eventos para a OP 2 (Tarefa 1 Direta)
-    var eventosOP2 = [
-      {
-        op_id: op2.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
-        tipo: 'inicio', timestamp_inicio: new Date(agora.getTime() - 5000000).toISOString()
-      },
-      {
-        op_id: op2.id, tarefa_id: t1.id, usuario_id: operador.id, usuario_nome: operador.nome,
-        tipo: 'conclusao', timestamp_inicio: new Date(agora.getTime() - 4000000).toISOString(), 
-        duracao_segundos: 1000
-      }
+    // -- OP2: Trator, 2 unidades, unidade 1 = João (completa), unidade 2 = Carlos (travado) --
+    // Unidade 1: João rápido, sem pausas
+    var ciclo2a = cicloCompleto(op2.id, proj1, proj1.tarefas, joao, agora - 2.2 * DAY, 700, false);
+    registrarLoteEventos(ciclo2a);
+    // Unidade 2: Carlos começa apenas a primeira tarefa, pausa, e nunca retoma
+    var t1 = proj1.tarefas[0];
+    var eventosStuck = [
+      montarEvento(op2.id, t1, proj1.id, carlos, 'inicio', agora - 0.8 * DAY),
+      montarEvento(op2.id, t1, proj1.id, carlos, 'pausa', agora - 0.8 * DAY + 400000, 'Chamado para reunião de emergência')
     ];
+    registrarLoteEventos(eventosStuck);
 
-    registrarLoteEventos(eventosOP1);
-    registrarLoteEventos(eventosOP2);
+    // -- OP3: Colheitadeira, 4 unidades, intercalando Maria e João --
+    var perfisOP3 = [
+      { usr: maria, sec: 1100, pause: false, base: -6.5 * DAY },
+      { usr: joao, sec: 750, pause: false, base: -5 * DAY },
+      { usr: maria, sec: 1050, pause: true, base: -3.8 * DAY },
+      { usr: joao, sec: 700, pause: false, base: -2.5 * DAY }
+    ];
+    for (var c3 = 0; c3 < perfisOP3.length; c3++) {
+      var pf = perfisOP3[c3];
+      var evts3 = cicloCompleto(op3.id, proj2, proj2.tarefas, pf.usr, agora + pf.base, pf.sec, pf.pause);
+      registrarLoteEventos(evts3);
+    }
 
-    return { sucesso: true, mensagem: "Dados Mock gerados com sucesso para " + operador.nome };
+    return { sucesso: true, mensagem: "Dados Mock gerados com sucesso! (João, Maria, Carlos)" };
   } catch (e) {
     return { sucesso: false, erro: e.message };
   }

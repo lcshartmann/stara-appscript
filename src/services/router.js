@@ -33,6 +33,11 @@ var Router = (function () {
       pagina: 'ui/Admin',
       permissao: 'gerenciar_usuarios',
       requerAutenticacao: true
+    },
+    gerencial: {
+      pagina: 'ui/Admin',
+      permissao: null,
+      requerAutenticacao: true
     }
   };
 
