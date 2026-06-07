@@ -11,6 +11,7 @@
     <div class="nav-item" data-page="projetos">📋 Projetos</div>
     <div class="nav-item" data-page="relatorios">📊 Relatórios</div>
     <div class="nav-item" data-page="usuarios">👥 Usuários</div>
+    <div class="nav-item" data-page="gerencial">⚙️ Gerencial</div>
   </div>
   <div class="main">
     
@@ -141,22 +142,56 @@
         </div>
 
         <!-- Dashboard de Cards -->
-        <div class="flex gap-4 mb-8">
-          <div class="card" style="flex: 1; background: #e3f2fd; border: none; padding: 24px;">
-            <div style="font-size: 12px; font-weight: 700; color: #1565c0; text-transform: uppercase;">OPs Finalizadas</div>
-            <div id="metric-ops-finalizadas" style="font-size: 32px; font-weight: 700; color: #0d47a1;">0</div>
+        <!-- People Performance -->
+        <div class="flex gap-4 mb-4">
+          <div class="card" style="flex: 1; background: #e8f5e9; border: none; padding: 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #2e7d32; text-transform: uppercase;">Tarefas Concluídas</div>
+            <div id="metric-tarefas-concluidas" style="font-size: 32px; font-weight: 700; color: #1b5e20;">0</div>
           </div>
-          <div class="card" style="flex: 1; background: #e8f5e9; border: none; padding: 24px;">
-            <div style="font-size: 12px; font-weight: 700; color: #2e7d32; text-transform: uppercase;">Eficiência Média</div>
+          <div class="card" style="flex: 1; background: #e3f2fd; border: none; padding: 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #1565c0; text-transform: uppercase;">Operadores Ativos</div>
+            <div id="metric-operadores-ativos" style="font-size: 32px; font-weight: 700; color: #0d47a1;">0</div>
+          </div>
+          <div class="card" style="flex: 1; background: #fff3e0; border: none; padding: 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #ef6c00; text-transform: uppercase;">Tempo Médio / Tarefa</div>
+            <div id="metric-tempo-medio" style="font-size: 32px; font-weight: 700; color: #e65100;">0 min</div>
+          </div>
+        </div>
+        <!-- Process / Project Metrics -->
+        <div class="flex gap-4 mb-4">
+          <div class="card" style="flex: 1; background: #fce4ec; border: none; padding: 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #c2185b; text-transform: uppercase;">Eficiência Produtiva</div>
             <div id="metric-eficiencia" style="font-size: 32px; font-weight: 700; color: #1b5e20;">--</div>
           </div>
-          <div class="card" style="flex: 1; background: #fff3e0; border: none; padding: 24px;">
-            <div style="font-size: 12px; font-weight: 700; color: #ef6c00; text-transform: uppercase;">Tempo Médio / Tarefa</div>
-            <div id="metric-tempo-medio" style="font-size: 32px; font-weight: 700; color: #e65100;">0m</div>
+          <div class="card" style="flex: 1; background: #f3e5f5; border: none; padding: 14px;">
+            <div style="font-size: 11px; font-weight: 700; color: #7b1fa2; text-transform: uppercase;">Projeto Mais Complexo</div>
+            <div id="metric-projeto-complexo" style="font-size: 18px; font-weight: 600; color: #4a148c; line-height: 1.3;">--</div>
           </div>
-          <div class="card" style="flex: 1; background: #fce4ec; border: none; padding: 24px;">
-            <div style="font-size: 12px; font-weight: 700; color: #c2185b; text-transform: uppercase;">Eventos Registrados</div>
-            <div id="metric-eventos" style="font-size: 32px; font-weight: 700; color: #880e4f;">0</div>
+          <div class="card" style="flex: 1; background: #e0f2f1; border: none; padding: 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: #00695c; text-transform: uppercase;">OPs em Andamento</div>
+            <div id="metric-ops-andamento" style="font-size: 32px; font-weight: 700; color: #004d40;">0</div>
+          </div>
+        </div>
+
+        <!-- Gráficos (2x2 grid) -->
+        <div class="flex gap-4 mb-4">
+          <div class="card" style="flex: 1; padding: 0; min-height: 350px;">
+            <div class="panel-header">👤 Tarefas Concluídas por Operador</div>
+            <div id="chart-tarefas-operador" style="height: 305px;"></div>
+          </div>
+          <div class="card" style="flex: 1; padding: 0; min-height: 350px;">
+            <div class="panel-header">⏱ Tempo Médio por Operador</div>
+            <div id="chart-tempo-operador" style="height: 305px;"></div>
+          </div>
+        </div>
+        <div class="flex gap-4 mb-8">
+          <div class="card" style="flex: 1; padding: 0; min-height: 350px;">
+            <div class="panel-header">📁 Mediana de Tarefa por Projeto</div>
+            <div id="chart-mediana-projeto" style="height: 305px;"></div>
+          </div>
+          <div class="card" style="flex: 1; padding: 0; min-height: 350px;">
+            <div class="panel-header">🔄 Produtivo vs Pausa por Operador</div>
+            <div id="chart-produtivo-pausa" style="height: 305px;"></div>
           </div>
         </div>
 
@@ -170,7 +205,7 @@
                   <option value="">Selecione uma OP...</option>
                 </select>
               </div>
-              <div id="containerTimeline" style="padding: 24px;">
+              <div id="containerTimeline" style="padding: 24px; max-height: 480px; overflow-y: auto;">
                 <div class="placeholder">Selecione uma OP acima para visualizar a linha do tempo.</div>
               </div>
             </div>
@@ -179,8 +214,11 @@
           <!-- Coluna Direita: Ranking -->
           <div style="flex: 1;">
             <div class="card" style="padding: 0;">
-              <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
+              <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2; display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-size: 16px; margin: 0; font-weight: 600;">🏆 Ranking de Execução</h2>
+                <select id="selectFiltroProjeto" style="width: auto; padding: 4px 10px; font-size: 12px;" onchange="RelatoriosModule.renderizarRanking()">
+                  <option value="">Todos os projetos</option>
+                </select>
               </div>
               <div id="containerRanking" style="padding: 20px;">
                 <div class="placeholder">Aguardando dados...</div>
@@ -227,6 +265,40 @@
             <div class="flex mt-6">
               <button class="btn btn-primary btn-lg" id="btnSalvarUsuario" style="background: var(--primary-500); padding: 10px 24px; font-size: 14px; border-radius: 6px; width: 100%;">Salvar Usuário</button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-gerencial" class="page" style="display:none; flex-direction: column; width: 100%;">
+      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="content-title">⚙️ Ferramentas Gerenciais</h1>
+            <p class="content-subtitle">Limpeza e administração de dados do sistema.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <div class="card" style="flex: 1; border: none; background: #fce4ec; padding: 24px; text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 12px;">🗑️</div>
+            <h3 style="margin: 0 0 8px; font-size: 16px; color: #c62828;">Eventos</h3>
+            <p style="font-size: 13px; color: #666; margin: 0 0 16px;">Remove todos os registros de eventos operacionais.</p>
+            <button class="btn btn-danger" onclick="GerencialModule.limpar('eventos', this)" style="width: 100%;">Limpar Eventos</button>
+          </div>
+
+          <div class="card" style="flex: 1; border: none; background: #fff3e0; padding: 24px; text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 12px;">🗑️</div>
+            <h3 style="margin: 0 0 8px; font-size: 16px; color: #e65100;">Ordens de Produção</h3>
+            <p style="font-size: 13px; color: #666; margin: 0 0 16px;">Remove todas as ordens de produção do sistema.</p>
+            <button class="btn btn-danger" onclick="GerencialModule.limpar('ops', this)" style="width: 100%;">Limpar OPs</button>
+          </div>
+
+          <div class="card" style="flex: 1; border: none; background: #e8f5e9; padding: 24px; text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 12px;">🗑️</div>
+            <h3 style="margin: 0 0 8px; font-size: 16px; color: #2e7d32;">Projetos</h3>
+            <p style="font-size: 13px; color: #666; margin: 0 0 16px;">Remove todos os projetos e suas tarefas/materiais.</p>
+            <button class="btn btn-danger" onclick="GerencialModule.limpar('projetos', this)" style="width: 100%;">Limpar Projetos</button>
           </div>
         </div>
       </div>
@@ -559,114 +631,454 @@
     var dadosCache = {
       eventos: [],
       ops: [],
+      projetos: [],
       usuarios: []
     };
+    var chartsReady = false;
 
     function inicializar() {
       showToast('Processando inteligência de dados...', 'info');
-      
-      google.script.run.withSuccessHandler(function(resEventos) {
-        dadosCache.eventos = resEventos.eventos;
-        
-        google.script.run.withSuccessHandler(function(resOps) {
-          dadosCache.ops = resOps.ops;
-          processarDashboard();
-          popularSelectTimeline();
-          renderizarRanking();
-        }).getOps();
 
-      }).getEventos();
+      google.script.run.withSuccessHandler(function(res) {
+        if (!res.sucesso) {
+          showToast('Erro ao carregar dados: ' + res.erro, 'error');
+          return;
+        }
+        dadosCache.eventos = res.eventos || [];
+        dadosCache.ops = res.ops || [];
+        dadosCache.projetos = res.projetos || [];
+        dadosCache.usuarios = res.usuarios || [];
+
+        processarKPIs();
+        popularSelectTimeline();
+        popularFiltroProjeto();
+        renderizarRanking();
+        carregarGoogleCharts(function() {
+          desenharCharts();
+        });
+      }).getDadosRelatorio();
     }
 
-    function processarDashboard() {
-      var finalizadas = dadosCache.ops.filter(o => o.status === 'finalizada').length;
-      document.getElementById('metric-ops-finalizadas').innerText = finalizadas;
-      document.getElementById('metric-eventos').innerText = dadosCache.eventos.length;
-
-      // Calcular Tempo Médio por Tarefa (Apenas eventos de conclusão)
-      var eventosConclusao = dadosCache.eventos.filter(e => e.tipo === 'conclusao');
-      if (eventosConclusao.length > 0) {
-        var totalSegundos = eventosConclusao.reduce((acc, e) => acc + (e.duracao_segundos || 0), 0);
-        var mediaMinutos = Math.round(totalSegundos / eventosConclusao.length / 60);
-        document.getElementById('metric-tempo-medio').innerText = mediaMinutos + 'm';
-        document.getElementById('metric-eficiencia').innerText = '🔥 Alta';
+    function carregarGoogleCharts(callback) {
+      if (typeof google !== 'undefined' && google.charts) {
+        if (!chartsReady) {
+          google.charts.load('current', { packages: ['corechart'] });
+          google.charts.setOnLoadCallback(function() {
+            chartsReady = true;
+            callback();
+          });
+        } else {
+          callback();
+        }
+      } else {
+        showToast('Google Charts não disponível', 'error');
+        callback();
       }
+    }
+
+    function mediana(arr) {
+      if (!arr || arr.length === 0) return 0;
+      var sorted = arr.slice().sort(function(a, b) { return a - b; });
+      var mid = Math.floor(sorted.length / 2);
+      if (sorted.length % 2 === 1) return sorted[mid];
+      return (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    function processarKPIs() {
+      var eventos = dadosCache.eventos;
+      var ops = dadosCache.ops;
+      var projetos = dadosCache.projetos;
+
+      // 1. Tarefas Concluídas
+      var conclusoes = eventos.filter(function(e) { return e.tipo === 'conclusao'; });
+      document.getElementById('metric-tarefas-concluidas').innerText = conclusoes.length;
+
+      // 2. Operadores Ativos
+      var opSet = {};
+      eventos.forEach(function(e) { opSet[e.usuario_id] = true; });
+      document.getElementById('metric-operadores-ativos').innerText = Object.keys(opSet).length;
+
+      // 3. Tempo Médio / Tarefa
+      var conclusoesComDuracao = conclusoes.filter(function(e) { return e.duracao_segundos > 0; });
+      if (conclusoesComDuracao.length > 0) {
+        var totalSec = conclusoesComDuracao.reduce(function(acc, e) { return acc + (e.duracao_segundos || 0); }, 0);
+        document.getElementById('metric-tempo-medio').innerText = Math.round(totalSec / conclusoesComDuracao.length / 60) + ' min';
+      }
+
+      // 4. Eficiência Produtiva
+      var eficiencias = [];
+      conclusoes.forEach(function(c) {
+        if (!c.duracao_segundos) return;
+        var inicio = eventos.find(function(e) {
+          return e.tipo === 'inicio' && e.op_id === c.op_id && e.tarefa_id === c.tarefa_id && e.usuario_id === c.usuario_id;
+        });
+        if (inicio) {
+          var elapsedS = (new Date(c.timestamp_inicio) - new Date(inicio.timestamp_inicio)) / 1000;
+          if (elapsedS > c.duracao_segundos) {
+            eficiencias.push(c.duracao_segundos / elapsedS * 100);
+          }
+        }
+      });
+      var elEf = document.getElementById('metric-eficiencia');
+      if (eficiencias.length > 0) {
+        var efMedia = Math.round(eficiencias.reduce(function(a, b) { return a + b; }, 0) / eficiencias.length);
+        elEf.innerText = efMedia + '%';
+        elEf.style.color = efMedia >= 75 ? '#1b5e20' : efMedia >= 50 ? '#e65100' : '#c62828';
+      }
+
+      // 5. Projeto Mais Complexo (highest median task time)
+      var projetosMedians = {};
+      projetos.forEach(function(p) {
+        var opIds = ops.filter(function(o) { return o.projeto_id === p.id; }).map(function(o) { return o.id; });
+        var duracoes = [];
+        conclusoes.forEach(function(c) {
+          if (opIds.indexOf(c.op_id) !== -1 && c.duracao_segundos > 0) {
+            duracoes.push(c.duracao_segundos);
+          }
+        });
+        if (duracoes.length > 0) {
+          projetosMedians[p.nome] = mediana(duracoes);
+        }
+      });
+      var projNomes = Object.keys(projetosMedians);
+      var elProj = document.getElementById('metric-projeto-complexo');
+      if (projNomes.length > 0) {
+        projNomes.sort(function(a, b) { return projetosMedians[b] - projetosMedians[a]; });
+        elProj.innerHTML = '<span style="font-size:15px;font-weight:600;">' + projNomes[0] + '</span><br><span style="font-size:11px;color:#666;">' + Math.round(projetosMedians[projNomes[0]] / 60) + ' min med. / tarefa</span>';
+      }
+
+      // 6. OPs em Andamento
+      var emAndamento = ops.filter(function(o) { return o.status !== 'finalizada'; }).length;
+      document.getElementById('metric-ops-andamento').innerText = emAndamento + ' de ' + ops.length;
+    }
+
+    function desenharCharts() {
+      if (!chartsReady) return;
+      chartTarefasPorOperador();
+      chartTempoPorOperador();
+      chartMedianaProjeto();
+      chartProdutivoPausa();
+    }
+
+    function chartTarefasPorOperador() {
+      var conclusoes = dadosCache.eventos.filter(function(e) { return e.tipo === 'conclusao'; });
+      var contagem = {};
+      conclusoes.forEach(function(e) {
+        var nome = e.usuario_nome || 'Desconhecido';
+        contagem[nome] = (contagem[nome] || 0) + 1;
+      });
+      var nomes = Object.keys(contagem).sort(function(a, b) { return contagem[b] - contagem[a]; });
+      if (nomes.length === 0) {
+        document.getElementById('chart-tarefas-operador').innerHTML = '<div class="placeholder" style="height:305px;display:flex;align-items:center;justify-content:center;">Sem dados disponíveis</div>';
+        return;
+      }
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Operador');
+      data.addColumn('number', 'Tarefas');
+      nomes.forEach(function(n) { data.addRow([n, contagem[n]]); });
+      var chart = new google.visualization.BarChart(document.getElementById('chart-tarefas-operador'));
+      chart.draw(data, {
+        backgroundColor: 'transparent',
+        colors: ['#F36F21'],
+        fontName: 'Geist',
+        chartArea: { width: '75%', height: '80%' },
+        hAxis: { textStyle: { fontSize: 12 } },
+        vAxis: { textStyle: { fontSize: 12 } },
+        legend: { position: 'none' },
+        animation: { startup: true, duration: 500, easing: 'out' }
+      });
+    }
+
+    function chartTempoPorOperador() {
+      var conclusoes = dadosCache.eventos.filter(function(e) { return e.tipo === 'conclusao' && e.duracao_segundos > 0; });
+      var operadores = {};
+      conclusoes.forEach(function(e) {
+        var nome = e.usuario_nome || 'Desconhecido';
+        if (!operadores[nome]) operadores[nome] = { total: 0, count: 0 };
+        operadores[nome].total += e.duracao_segundos;
+        operadores[nome].count++;
+      });
+      var nomes = Object.keys(operadores);
+      if (nomes.length === 0) {
+        document.getElementById('chart-tempo-operador').innerHTML = '<div class="placeholder" style="height:305px;display:flex;align-items:center;justify-content:center;">Sem dados disponíveis</div>';
+        return;
+      }
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Operador');
+      data.addColumn('number', 'Minutos');
+      nomes.forEach(function(n) {
+        data.addRow([n, Math.round(operadores[n].total / operadores[n].count / 60)]);
+      });
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart-tempo-operador'));
+      chart.draw(data, {
+        backgroundColor: 'transparent',
+        colors: ['#00A859'],
+        fontName: 'Geist',
+        chartArea: { width: '75%', height: '70%' },
+        hAxis: { textStyle: { fontSize: 12 } },
+        vAxis: { textStyle: { fontSize: 12 }, title: 'Minutos' },
+        legend: { position: 'none' },
+        animation: { startup: true, duration: 500, easing: 'out' }
+      });
+    }
+
+    function chartMedianaProjeto() {
+      var projetosMedians = {};
+      dadosCache.projetos.forEach(function(p) {
+        var opIds = dadosCache.ops.filter(function(o) { return o.projeto_id === p.id; }).map(function(o) { return o.id; });
+        var duracoes = [];
+        dadosCache.eventos.forEach(function(e) {
+          if (e.tipo === 'conclusao' && e.duracao_segundos > 0 && opIds.indexOf(e.op_id) !== -1) {
+            duracoes.push(e.duracao_segundos);
+          }
+        });
+        if (duracoes.length > 0) {
+          projetosMedians[p.nome] = Math.round(mediana(duracoes) / 60);
+        }
+      });
+      var nomes = Object.keys(projetosMedians);
+      if (nomes.length === 0) {
+        document.getElementById('chart-mediana-projeto').innerHTML = '<div class="placeholder" style="height:305px;display:flex;align-items:center;justify-content:center;">Sem dados disponíveis</div>';
+        return;
+      }
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Projeto');
+      data.addColumn('number', 'Mediana (min)');
+      nomes.forEach(function(n) { data.addRow([n, projetosMedians[n]]); });
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart-mediana-projeto'));
+      chart.draw(data, {
+        backgroundColor: 'transparent',
+        colors: ['#7b1fa2'],
+        fontName: 'Geist',
+        chartArea: { width: '75%', height: '70%' },
+        hAxis: { textStyle: { fontSize: 11 } },
+        vAxis: { textStyle: { fontSize: 12 }, title: 'Minutos' },
+        legend: { position: 'none' },
+        animation: { startup: true, duration: 500, easing: 'out' }
+      });
+    }
+
+    function chartProdutivoPausa() {
+      var operadores = {};
+      dadosCache.eventos.filter(function(e) { return e.tipo === 'conclusao'; }).forEach(function(c) {
+        var nome = c.usuario_nome || 'Desconhecido';
+        if (!operadores[nome]) operadores[nome] = { ativo: 0, pausa: 0 };
+        operadores[nome].ativo += c.duracao_segundos || 0;
+        var inicio = dadosCache.eventos.find(function(e) {
+          return e.tipo === 'inicio' && e.op_id === c.op_id && e.tarefa_id === c.tarefa_id && e.usuario_id === c.usuario_id;
+        });
+        if (inicio) {
+          var elapsedS = (new Date(c.timestamp_inicio) - new Date(inicio.timestamp_inicio)) / 1000;
+          if (elapsedS > (c.duracao_segundos || 0)) {
+            operadores[nome].pausa += elapsedS - (c.duracao_segundos || 0);
+          }
+        }
+      });
+      var nomes = Object.keys(operadores);
+      if (nomes.length === 0) {
+        document.getElementById('chart-produtivo-pausa').innerHTML = '<div class="placeholder" style="height:305px;display:flex;align-items:center;justify-content:center;">Sem dados disponíveis</div>';
+        return;
+      }
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Operador');
+      data.addColumn('number', 'Produtivo');
+      data.addColumn('number', 'Pausa');
+      nomes.forEach(function(n) {
+        data.addRow([n, Math.round(operadores[n].ativo / 60), Math.round(operadores[n].pausa / 60)]);
+      });
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart-produtivo-pausa'));
+      chart.draw(data, {
+        backgroundColor: 'transparent',
+        colors: ['#00A859', '#F9A825'],
+        fontName: 'Geist',
+        chartArea: { width: '75%', height: '70%' },
+        isStacked: true,
+        hAxis: { textStyle: { fontSize: 12 } },
+        vAxis: { textStyle: { fontSize: 12 }, title: 'Minutos' },
+        legend: { position: 'top', textStyle: { fontSize: 11 } },
+        animation: { startup: true, duration: 500, easing: 'out' }
+      });
     }
 
     function popularSelectTimeline() {
       var select = document.getElementById('selectOpTimeline');
       var options = '<option value="">Selecione uma OP...</option>';
-      dadosCache.ops.forEach(o => {
-        options += `<option value="${o.id}">OP #${o.id} - ${o.nome_projeto}</option>`;
+      dadosCache.ops.forEach(function(o) {
+        options += '<option value="' + o.id + '">OP #' + o.id + ' - ' + o.nome_projeto + '</option>';
       });
       select.innerHTML = options;
     }
 
     function carregarTimeline(opId) {
-      if (!opId) return;
+      if (!opId) {
+        document.getElementById('containerTimeline').innerHTML = '<div class="placeholder">Selecione uma OP acima para visualizar a linha do tempo.</div>';
+        return;
+      }
       var container = document.getElementById('containerTimeline');
-      var eventosOp = dadosCache.eventos.filter(e => e.op_id == opId);
-      
+      var eventosOp = dadosCache.eventos.filter(function(e) { return e.op_id == opId; });
       if (eventosOp.length === 0) {
         container.innerHTML = '<div class="placeholder">Nenhum evento registrado para esta OP.</div>';
         return;
       }
+      eventosOp.sort(function(a, b) { return new Date(a.timestamp_inicio) - new Date(b.timestamp_inicio); });
 
-      // Ordenar por timestamp
-      eventosOp.sort((a, b) => new Date(a.timestamp_inicio) - new Date(b.timestamp_inicio));
+      var op = null;
+      var projeto = null;
+      dadosCache.ops.forEach(function(o) { if (o.id == opId) op = o; });
+      if (op) {
+        dadosCache.projetos.forEach(function(p) { if (p.id == op.projeto_id) projeto = p; });
+      }
+
+      // Group events by task
+      var grupos = {};
+      eventosOp.forEach(function(e) {
+        var chave = e.tarefa_id || 0;
+        if (!grupos[chave]) {
+          var tarefaNome = 'Tarefa';
+          if (projeto && projeto.tarefas) {
+            projeto.tarefas.forEach(function(t) { if (t.id == e.tarefa_id) tarefaNome = t.nome; });
+          }
+          grupos[chave] = { nome: tarefaNome, eventos: [] };
+        }
+        grupos[chave].eventos.push(e);
+      });
 
       var html = '<div style="border-left: 2px solid #eee; padding-left: 20px; margin-left: 10px;">';
-      eventosOp.forEach(e => {
-        var cor = '#4a77d4';
-        if (e.tipo === 'pausa') cor = '#f9a825';
-        if (e.tipo === 'conclusao') cor = '#1db954';
-        
-        var dataHora = new Date(e.timestamp_inicio).toLocaleTimeString();
-        
-        html += `
-          <div style="position: relative; margin-bottom: 24px;">
-            <div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: ${cor}; border: 2px solid white;"></div>
-            <div style="font-size: 11px; color: #999; margin-bottom: 2px;">${dataHora} • ${e.usuario_nome || 'Sistema'}</div>
-            <div style="font-weight: 600; text-transform: uppercase; font-size: 13px;">${e.tipo}</div>
-            <div style="font-size: 14px; color: #555;">${e.observacao ? '💬 ' + e.observacao : ''}</div>
-            ${e.duracao_segundos > 0 ? `<div class="badge badge-info" style="margin-top:4px">Tempo: ${Math.round(e.duracao_segundos/60)} min</div>` : ''}
-          </div>
-        `;
+      Object.keys(grupos).forEach(function(chave) {
+        var grupo = grupos[chave];
+        html += '<div style="margin-bottom: 20px;">';
+        html += '<div style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; margin-bottom: 12px; padding: 4px 10px; background: #f5f5f5; border-radius: 4px; display: inline-block;">' + grupo.nome + '</div>';
+        grupo.eventos.forEach(function(e) {
+          var cor = '#4a77d4';
+          if (e.tipo === 'pausa') cor = '#f9a825';
+          if (e.tipo === 'conclusao') cor = '#1db954';
+          if (e.tipo === 'retomada') cor = '#00bcd4';
+          var dataHora = new Date(e.timestamp_inicio).toLocaleTimeString();
+          var icone = '▶';
+          if (e.tipo === 'pausa') icone = '⏸';
+          if (e.tipo === 'retomada') icone = '▶';
+          if (e.tipo === 'conclusao') icone = '✅';
+          html += '<div style="position: relative; margin-bottom: 16px;">';
+          html += '<div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: ' + cor + '; border: 2px solid white;"></div>';
+          html += '<div style="font-size: 11px; color: #999; margin-bottom: 2px;">' + dataHora + ' • ' + (e.usuario_nome || 'Sistema') + '</div>';
+          html += '<div style="font-weight: 600; text-transform: uppercase; font-size: 13px;">' + icone + ' ' + e.tipo + '</div>';
+          if (e.observacao) {
+            html += '<div style="font-size: 13px; color: #555; margin-top: 2px;">💬 ' + e.observacao + '</div>';
+          }
+          if (e.duracao_segundos > 0) {
+            html += '<div class="badge badge-info" style="margin-top:4px">⏱ ' + Math.round(e.duracao_segundos / 60) + ' min</div>';
+          }
+          html += '</div>';
+        });
+        html += '</div>';
       });
       container.innerHTML = html + '</div>';
     }
 
-    function renderizarRanking() {
-      var contagem = {};
-      
-      // Filtrar apenas eventos de conclusão para o ranking
-      dadosCache.eventos.filter(e => e.tipo === 'conclusao').forEach(e => {
-        var nome = e.usuario_nome || 'Desconhecido';
-        contagem[nome] = (contagem[nome] || 0) + 1;
+    function popularFiltroProjeto() {
+      var select = document.getElementById('selectFiltroProjeto');
+      var options = '<option value="">Todos os projetos</option>';
+      dadosCache.projetos.forEach(function(p) {
+        options += '<option value="' + p.id + '">' + p.nome + '</option>';
       });
+      select.innerHTML = options;
+    }
 
-      // Transformar em array e ordenar
-      var ranking = Object.keys(contagem).map(nome => {
-        return { nome: nome, total: contagem[nome] };
-      }).sort((a, b) => b.total - a.total);
-      
-      if (ranking.length === 0) {
-        document.getElementById('containerRanking').innerHTML = '<div class="placeholder">Nenhuma tarefa concluída para o ranking.</div>';
+    function renderizarRanking() {
+      var selectedProjetoId = document.getElementById('selectFiltroProjeto').value;
+      var container = document.getElementById('containerRanking');
+
+      var eventosFiltrados = dadosCache.eventos;
+      if (selectedProjetoId) {
+        var opIdsProjeto = [];
+        dadosCache.ops.forEach(function(o) { if (o.projeto_id == selectedProjetoId) opIdsProjeto.push(o.id); });
+        eventosFiltrados = eventosFiltrados.filter(function(e) { return opIdsProjeto.indexOf(e.op_id) !== -1; });
+      }
+
+      var conclusoes = eventosFiltrados.filter(function(e) { return e.tipo === 'conclusao'; });
+      if (conclusoes.length === 0) {
+        container.innerHTML = '<div class="placeholder">Nenhuma tarefa concluída para o ranking.</div>';
         return;
       }
 
-      var html = '<table><thead><tr><th>Operador</th><th style="text-align:right">Tarefas</th></tr></thead><tbody>';
-      ranking.forEach(r => {
-          html += `<tr><td><strong>${r.nome}</strong></td><td style="text-align:right"><span class="badge badge-success">${r.total}</span></td></tr>`;
+      var operadores = {};
+      conclusoes.forEach(function(c) {
+        var nome = c.usuario_nome || 'Desconhecido';
+        if (!operadores[nome]) operadores[nome] = { tarefas: 0, totalSegundos: 0, totalEficiencia: 0, countEficiencia: 0 };
+        operadores[nome].tarefas++;
+        operadores[nome].totalSegundos += c.duracao_segundos || 0;
+        var inicio = eventosFiltrados.find(function(e) {
+          return e.tipo === 'inicio' && e.op_id === c.op_id && e.tarefa_id === c.tarefa_id && e.usuario_id === c.usuario_id;
+        });
+        if (inicio && c.duracao_segundos > 0) {
+          var elapsedS = (new Date(c.timestamp_inicio) - new Date(inicio.timestamp_inicio)) / 1000;
+          if (elapsedS > c.duracao_segundos) {
+            operadores[nome].totalEficiencia += (c.duracao_segundos / elapsedS * 100);
+            operadores[nome].countEficiencia++;
+          }
+        }
       });
-      
-      document.getElementById('containerRanking').innerHTML = html + '</tbody></table>';
+
+      var ranking = Object.keys(operadores).map(function(nome) {
+        var d = operadores[nome];
+        return {
+          nome: nome,
+          tarefas: d.tarefas,
+          tempoMedio: Math.round(d.totalSegundos / d.tarefas / 60),
+          eficiencia: d.countEficiencia > 0 ? Math.round(d.totalEficiencia / d.countEficiencia) : null
+        };
+      }).sort(function(a, b) { return b.tarefas - a.tarefas; });
+
+      var maxTarefas = ranking.length > 0 ? ranking[0].tarefas : 0;
+      var html = '<table><thead><tr><th>Operador</th><th style="text-align:right">Tarefas</th><th style="text-align:right">Tempo Médio</th><th style="text-align:right">Eficiência</th></tr></thead><tbody>';
+      ranking.forEach(function(r) {
+        var destaque = r.tarefas === maxTarefas && ranking.length > 1 ? '⭐ ' : '';
+        var efDisplay = r.eficiencia !== null ? r.eficiencia + '%' : '--';
+        var efBadge = r.eficiencia !== null ? (r.eficiencia >= 75 ? 'badge-success' : r.eficiencia >= 50 ? 'badge-warning' : 'badge-error') : '';
+        html += '<tr>' +
+          '<td><strong>' + destaque + r.nome + '</strong></td>' +
+          '<td style="text-align:right"><span class="badge badge-success">' + r.tarefas + '</span></td>' +
+          '<td style="text-align:right">' + r.tempoMedio + ' min</td>' +
+          '<td style="text-align:right">' + (efBadge ? '<span class="badge ' + efBadge + '">' + efDisplay + '</span>' : efDisplay) + '</td>' +
+          '</tr>';
+      });
+      container.innerHTML = html + '</tbody></table>';
     }
 
     return {
       inicializar: inicializar,
-      carregarTimeline: carregarTimeline
+      carregarTimeline: carregarTimeline,
+      renderizarRanking: renderizarRanking
     };
+  })();
+
+  var GerencialModule = (function() {
+    function limpar(tipo, btn) {
+      var nomes = { eventos: 'eventos', ops: 'Ordens de Produção', projetos: 'projetos' };
+      if (!confirm('Tem certeza que deseja remover TODOS os ' + (nomes[tipo] || tipo) + '?\n\nEsta ação não pode ser desfeita.')) return;
+
+      var fn = tipo === 'eventos' ? 'limparEventos' : tipo === 'ops' ? 'limparOps' : tipo === 'projetos' ? 'limparProjetos' : null;
+      if (!fn) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Removendo...';
+
+      google.script.run.withSuccessHandler(function(res) {
+        btn.disabled = false;
+        btn.innerText = 'Limpar ' + (tipo.charAt(0).toUpperCase() + tipo.slice(1));
+        if (res.sucesso) {
+          showToast(res.mensagem, 'success');
+        } else {
+          showToast('Erro: ' + res.erro, 'error');
+        }
+      }).withFailureHandler(function(err) {
+        btn.disabled = false;
+        btn.innerText = 'Limpar ' + (tipo.charAt(0).toUpperCase() + tipo.slice(1));
+        showToast('Erro de comunicação: ' + err.message, 'error');
+      })[fn]();
+    }
+
+    return { limpar: limpar };
   })();
 
   // Hook no ativador de página
