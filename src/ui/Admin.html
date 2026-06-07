@@ -1,226 +1,189 @@
 <div id="appView" class="app">
   <div class="header">
     <div class="header-left">
+      <button class="hamburger" id="menuToggle" aria-label="Menu"><i class="ph ph-list"></i></button>
       <img class="header-logo" src="https://cdn.brandfetch.io/idSuWMr7wH/w/1080/h/1080/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B" alt="Stara" />
       <div class="header-title"><div class="header-subtitle">Painel Administrativo - ERP Treinamento</div></div>
     </div>
-    <button class="btn btn-secondary" id="btnLogout">Sair</button>
+    <button class="btn btn-header-action" id="btnLogout"><i class="ph ph-sign-out"></i> Sair</button>
   </div>
-  <div class="nav">
-    <div class="nav-item active" data-page="ops">📦 Ordens de Produção</div>
-    <div class="nav-item" data-page="projetos">📋 Projetos</div>
-    <div class="nav-item" data-page="relatorios">📊 Relatórios</div>
-    <div class="nav-item" data-page="usuarios">👥 Usuários</div>
-    <div class="nav-item" data-page="gerencial">⚙️ Gerencial</div>
+  <div class="nav" id="adminNav">
+    <div class="nav-item active" data-page="ops"><i class="ph ph-package"></i> Ordens de Produção</div>
+    <div class="nav-item" data-page="projetos"><i class="ph ph-clipboard-text"></i> Projetos</div>
+    <div class="nav-item" data-page="relatorios"><i class="ph ph-chart-bar"></i> Relatórios</div>
+    <div class="nav-item" data-page="usuarios"><i class="ph ph-users"></i> Usuários</div>
+    <div class="nav-item" data-page="gerencial"><i class="ph ph-gear"></i> Gerencial</div>
   </div>
   <div class="main">
     
-    <!-- PAGE: ORDENS DE PRODUÇÃO -->
-    <div id="page-ops" class="page" style="flex-direction: row; gap: 24px; width: 100%;">
-      <!-- Esquerda: Listagem (flex-grow) -->
-      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+    <div id="page-ops" class="page page-row">
+      <div class="content content-fluid">
         <h1 class="content-title">Ordens de Produção</h1>
         <p class="content-subtitle mb-4">Acompanhe o status das ordens em tempo real.</p>
-        
-        <div class="card" style="background: white; border: 1px solid #eef0f2; padding: 0; margin-bottom: 24px;">
-          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
-            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">📦 Em Aberto / Andamento</h2>
-          </div>
-          <div id="listaOpsAtivas" style="padding: 20px;"></div>
+        <div class="panel mb-4">
+          <div class="panel-header"><i class="ph ph-package"></i> Em Aberto / Andamento</div>
+          <div id="listaOpsAtivas" class="panel-body-lg"></div>
         </div>
-
-        <div class="card" style="background: white; border: 1px solid #eef0f2; padding: 0;">
-          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
-            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">🕒 Histórico (Finalizadas)</h2>
-          </div>
-          <div id="listaOpsFinalizadas" style="padding: 20px;"></div>
+        <div class="panel">
+          <div class="panel-header"><i class="ph ph-clock-counter-clockwise"></i> Histórico (Finalizadas)</div>
+          <div id="listaOpsFinalizadas" class="panel-body-lg"></div>
         </div>
       </div>
-
-      <!-- Direita: Criar OP (35%) -->
-      <div class="content" style="max-width: 35%; flex: 0 0 35%; margin: 0;">
-        <div id="formOp" class="card" style="background: #f8f9fa; border: 1px solid #eef0f2; padding: 0;">
-          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
-            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">Nova Ordem de Produção</h2>
-          </div>
-          
-          <div style="padding: 24px;">
+      <div class="content content-sidebar">
+        <div id="formOp" class="card card-form">
+          <div class="panel-header"><h2 class="panel-title">Nova Ordem de Produção</h2></div>
+          <div class="panel-body-xl">
             <div class="field">
-              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 8px;">Projeto Base</label>
-              <select id="selectProjetoOp" style="background: white; border: 1px solid #ddd;"></select>
+              <label class="label-uppercase">Projeto Base</label>
+              <select id="selectProjetoOp" class="input-white"></select>
             </div>
             <div class="field">
-              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 8px;">Quantidade Total (un)</label>
-              <input type="number" id="inputQtdOp" min="1" placeholder="Ex: 50" style="background: white; border: 1px solid #ddd;" />
+              <label class="label-uppercase">Quantidade Total (un)</label>
+              <input type="number" id="inputQtdOp" min="1" placeholder="Ex: 50" class="input-white" />
             </div>
-            
             <div class="flex mt-6">
-              <button class="btn btn-primary btn-lg" id="btnSalvarOp" style="padding: 10px 24px; font-size: 14px; border-radius: 6px; width: 100%;">
-                Abrir Ordem de Produção
-              </button>
+              <button class="btn btn-primary btn-lg w-full" id="btnSalvarOp"><i class="ph ph-plus-circle"></i> Abrir Ordem de Produção</button>
             </div>
           </div>
         </div>
       </div>
     </div>
     
-    <!-- PAGE: PROJETOS -->
-    <div id="page-projetos" class="page" style="display:none; flex-direction: row; gap: 24px; width: 100%;">
-      <!-- Esquerda: Listagem (flex-grow) -->
-      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+    <div id="page-projetos" class="page page-row hidden">
+      <div class="content content-fluid">
         <h1 class="content-title">Projetos Cadastrados</h1>
         <p class="content-subtitle mb-4">Gerencie os modelos de produção existentes.</p>
-        
-        <div class="card" style="background: white; border: 1px solid #eef0f2; padding: 0;">
-          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
-            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">📋 Lista de Projetos</h2>
-          </div>
-          <div id="listaProjetos" style="padding: 20px;"></div>
+        <div class="panel">
+          <div class="panel-header"><i class="ph ph-clipboard-text"></i> Lista de Projetos</div>
+          <div id="listaProjetos" class="panel-body-lg"></div>
         </div>
       </div>
-
-      <!-- Direita: Novo Projeto (35%) -->
-      <div class="content" style="max-width: 35%; flex: 0 0 35%; margin: 0;">
-        <div id="formProjeto" class="card" style="background: var(--bg-secondary); border: 1px solid #eef0f2; padding: 0;">
-          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
-            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">Novo Projeto</h2>
-          </div>
-          
-          <div style="padding: 24px;">
+      <div class="content content-sidebar">
+        <div id="formProjeto" class="card card-form">
+          <div class="panel-header"><h2 class="panel-title">Novo Projeto</h2></div>
+          <div class="panel-body-xl">
             <div class="field">
-              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 8px;">Nome do Projeto</label>
-              <input type="text" id="inputNomeProjeto" placeholder="Ex: Suporte metálico tipo B" style="background: white; border: 1px solid #ddd;" />
+              <label class="label-uppercase">Nome do Projeto</label>
+              <input type="text" id="inputNomeProjeto" placeholder="Ex: Suporte metálico tipo B" class="input-white" />
             </div>
-
-            <!-- Materiais -->
             <div class="mb-4">
               <div class="flex justify-between items-center mb-2">
-                <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin: 0;">Materiais</label>
-                <button class="btn btn-primary btn-sm" onclick="addMaterialField()" style="border-radius: 6px; padding: 4px 12px;">+ Material</button>
+                <label class="label-uppercase" style="margin:0;">Materiais</label>
+                <button class="btn btn-primary btn-sm" onclick="addMaterialField()"><i class="ph ph-plus"></i> Material</button>
               </div>
-              <ul id="materiaisList" class="dynamic-list" style="margin: 0;">
-                <li class="dynamic-item" style="gap: 8px; margin-bottom: 8px; position: relative">
-                  <input type="text" placeholder="Nome" class="mat-nome" style="background: white; border: 1px solid #ddd;" />
-                  <input type="text" placeholder="Qtd" class="mat-qtd" style="background: white; border: 1px solid #ddd; max-width: 60px;" />
-                 <button class="btn btn-sm" onclick="removeDynamicField(this)" style="color: #c0392b; background: transparent; font-weight: bold;">X</button>
+              <ul id="materiaisList" class="dynamic-list">
+                <li class="dynamic-item">
+                  <input type="text" placeholder="Nome" class="mat-nome input-white" />
+                  <input type="text" placeholder="Qtd" class="mat-qtd input-white" style="max-width:60px;" />
+                  <button class="btn btn-icon dynamic-remove" onclick="removeDynamicField(this)">X</button>
                 </li>
               </ul>
             </div>
-
-            <!-- Etapas -->
             <div class="mb-4">
               <div class="flex justify-between items-center mb-3">
-                <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin: 0;">Etapas</label>
-                <button class="btn btn-primary btn-sm" onclick="addTaskField()" style="border-radius: 6px; padding: 4px 12px;">+ Etapa</button>
+                <label class="label-uppercase" style="margin:0;">Etapas</label>
+                <button class="btn btn-primary btn-sm" onclick="addTaskField()"><i class="ph ph-plus"></i> Etapa</button>
               </div>
-              <ul id="tarefasList" class="dynamic-list" style="margin: 0;">
-                <li class="dynamic-item" style="flex-direction: column; align-items: stretch; background: white; border: 1px solid #eee; padding: 12px; border-radius: 8px; position: relative; margin-bottom: 12px;">
-                  <button class="btn btn-sm" onclick="removeDynamicField(this)" style="position: absolute; top: 5px; right: 5px; color: #c0392b; background: transparent;">X</button>
-                  <input type="text" placeholder="Título" class="tar-nome mb-2" style="background: white; border: 1px solid #ddd; font-size: 12px;" />
-                  <textarea placeholder="Instrução" class="tar-desc" style="background: white; border: 1px solid #ddd; min-height: 40px; font-size: 11px;"></textarea>
-                  <textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2" style="background: white; border: 1px solid #ddd; font-size: 11px;"></textarea>
+              <ul id="tarefasList" class="dynamic-list">
+                <li class="dynamic-item-task dynamic-item">
+                  <button class="btn btn-sm dynamic-remove" onclick="removeDynamicField(this)">X</button>
+                  <input type="text" placeholder="Título" class="tar-nome mb-2 input-white text-sm" />
+                  <textarea placeholder="Instrução" class="tar-desc input-white" style="min-height:40px;font-size:11px;"></textarea>
+                  <textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2 input-white" style="font-size:11px;"></textarea>
                 </li>
               </ul>
             </div>
-
             <div class="flex mt-6">
-              <button class="btn btn-primary btn-lg" id="btnSalvarProjeto" style="padding: 10px 24px; font-size: 14px; border-radius: 6px; width: 100%;">Salvar Projeto</button>
+              <button class="btn btn-primary btn-lg w-full" id="btnSalvarProjeto"><i class="ph ph-floppy-disk"></i> Salvar Projeto</button>
             </div>
           </div>
         </div>
       </div>
     </div>
     
-    <div id="page-relatorios" class="page" style="display:none; flex-direction: column; width: 100%;">
-      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+    <div id="page-relatorios" class="page page-col hidden">
+      <div class="content content-fluid">
         <div class="flex justify-between items-center mb-6">
           <div>
             <h1 class="content-title">Relatórios Operacionais</h1>
             <p class="content-subtitle">Inteligência e análise de desempenho da produção.</p>
           </div>
-          <button class="btn btn-secondary" onclick="RelatoriosModule.inicializar()">🔄 Atualizar Dados</button>
+          <button class="btn btn-secondary" onclick="RelatoriosModule.inicializar()"><i class="ph ph-arrows-clockwise"></i> Atualizar Dados</button>
         </div>
 
-        <!-- Dashboard de Cards -->
-        <!-- People Performance -->
         <div class="flex gap-4 mb-4">
-          <div class="card" style="flex: 1; background: #e8f5e9; border: none; padding: 16px;">
-            <div style="font-size: 11px; font-weight: 700; color: #2e7d32; text-transform: uppercase;">Tarefas Concluídas</div>
-            <div id="metric-tarefas-concluidas" style="font-size: 32px; font-weight: 700; color: #1b5e20;">0</div>
+          <div class="card kpi-card kpi-card-green">
+            <div class="kpi-label" style="color:#2e7d32;">Tarefas Concluídas</div>
+            <div id="metric-tarefas-concluidas" class="kpi-value" style="color:#1b5e20;">0</div>
           </div>
-          <div class="card" style="flex: 1; background: #e3f2fd; border: none; padding: 16px;">
-            <div style="font-size: 11px; font-weight: 700; color: #1565c0; text-transform: uppercase;">Operadores Ativos</div>
-            <div id="metric-operadores-ativos" style="font-size: 32px; font-weight: 700; color: #0d47a1;">0</div>
+          <div class="card kpi-card kpi-card-blue">
+            <div class="kpi-label" style="color:#1565c0;">Operadores Ativos</div>
+            <div id="metric-operadores-ativos" class="kpi-value" style="color:#0d47a1;">0</div>
           </div>
-          <div class="card" style="flex: 1; background: #fff3e0; border: none; padding: 16px;">
-            <div style="font-size: 11px; font-weight: 700; color: #ef6c00; text-transform: uppercase;">Tempo Médio / Tarefa</div>
-            <div id="metric-tempo-medio" style="font-size: 32px; font-weight: 700; color: #e65100;">0 min</div>
+          <div class="card kpi-card kpi-card-orange">
+            <div class="kpi-label" style="color:#ef6c00;">Tempo Médio / Tarefa</div>
+            <div id="metric-tempo-medio" class="kpi-value" style="color:#e65100;">0 min</div>
           </div>
         </div>
-        <!-- Process / Project Metrics -->
         <div class="flex gap-4 mb-4">
-          <div class="card" style="flex: 1; background: #fce4ec; border: none; padding: 16px;">
-            <div style="font-size: 11px; font-weight: 700; color: #c2185b; text-transform: uppercase;">Eficiência Produtiva</div>
-            <div id="metric-eficiencia" style="font-size: 32px; font-weight: 700; color: #1b5e20;">--</div>
+          <div class="card kpi-card kpi-card-pink">
+            <div class="kpi-label" style="color:#c2185b;">Eficiência Produtiva</div>
+            <div id="metric-eficiencia" class="kpi-value" style="color:#1b5e20;">--</div>
           </div>
-          <div class="card" style="flex: 1; background: #f3e5f5; border: none; padding: 14px;">
-            <div style="font-size: 11px; font-weight: 700; color: #7b1fa2; text-transform: uppercase;">Projeto Mais Complexo</div>
-            <div id="metric-projeto-complexo" style="font-size: 18px; font-weight: 600; color: #4a148c; line-height: 1.3;">--</div>
+          <div class="card kpi-card kpi-card-purple">
+            <div class="kpi-label" style="color:#7b1fa2;">Projeto Mais Complexo</div>
+            <div id="metric-projeto-complexo" class="kpi-value-sm" style="color:#4a148c;">--</div>
           </div>
-          <div class="card" style="flex: 1; background: #e0f2f1; border: none; padding: 16px;">
-            <div style="font-size: 11px; font-weight: 700; color: #00695c; text-transform: uppercase;">OPs em Andamento</div>
-            <div id="metric-ops-andamento" style="font-size: 32px; font-weight: 700; color: #004d40;">0</div>
+          <div class="card kpi-card kpi-card-teal">
+            <div class="kpi-label" style="color:#00695c;">OPs em Andamento</div>
+            <div id="metric-ops-andamento" class="kpi-value" style="color:#004d40;">0</div>
           </div>
         </div>
 
-        <!-- Gráficos (2x2 grid) -->
         <div class="flex gap-4 mb-4">
-          <div class="card" style="flex: 1; padding: 0; min-height: 350px;">
-            <div class="panel-header">👤 Tarefas Concluídas por Operador</div>
-            <div id="chart-tarefas-operador" style="height: 305px;"></div>
+          <div class="card chart-container" style="flex:1;padding:0;">
+            <div class="panel-header"><i class="ph ph-user-circle"></i> Tarefas Concluídas por Operador</div>
+            <div id="chart-tarefas-operador" class="chart-area"></div>
           </div>
-          <div class="card" style="flex: 1; padding: 0; min-height: 350px;">
-            <div class="panel-header">⏱ Tempo Médio por Operador</div>
-            <div id="chart-tempo-operador" style="height: 305px;"></div>
+          <div class="card chart-container" style="flex:1;padding:0;">
+            <div class="panel-header"><i class="ph ph-timer"></i> Tempo Médio por Operador</div>
+            <div id="chart-tempo-operador" class="chart-area"></div>
           </div>
         </div>
         <div class="flex gap-4 mb-8">
-          <div class="card" style="flex: 1; padding: 0; min-height: 350px;">
-            <div class="panel-header">📁 Mediana de Tarefa por Projeto</div>
-            <div id="chart-mediana-projeto" style="height: 305px;"></div>
+          <div class="card chart-container" style="flex:1;padding:0;">
+            <div class="panel-header"><i class="ph ph-folder"></i> Mediana de Tarefa por Projeto</div>
+            <div id="chart-mediana-projeto" class="chart-area"></div>
           </div>
-          <div class="card" style="flex: 1; padding: 0; min-height: 350px;">
-            <div class="panel-header">🔄 Produtivo vs Pausa por Operador</div>
-            <div id="chart-produtivo-pausa" style="height: 305px;"></div>
+          <div class="card chart-container" style="flex:1;padding:0;">
+            <div class="panel-header"><i class="ph ph-chart-donut"></i> Produtivo vs Pausa por Operador</div>
+            <div id="chart-produtivo-pausa" class="chart-area"></div>
           </div>
         </div>
 
         <div class="flex gap-6">
-          <!-- Coluna Esquerda: Timeline -->
-          <div style="flex: 1.5;">
-            <div class="card" style="padding: 0; min-height: 400px;">
-              <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 16px; margin: 0; font-weight: 600;">📊 Timeline da Ordem de Produção</h2>
-                <select id="selectOpTimeline" style="width: auto; padding: 4px 10px; font-size: 12px;" onchange="RelatoriosModule.carregarTimeline(this.value)">
+          <div style="flex:1.5;">
+            <div class="card chart-container" style="padding:0;min-height:400px;">
+              <div class="panel-header" style="justify-content:space-between;">
+                <h2 class="panel-title"><i class="ph ph-chart-line"></i> Timeline da Ordem de Produção</h2>
+                <select id="selectOpTimeline" class="w-auto text-sm" style="padding:4px 10px;" onchange="RelatoriosModule.carregarTimeline(this.value)">
                   <option value="">Selecione uma OP...</option>
                 </select>
               </div>
-              <div id="containerTimeline" style="padding: 24px; max-height: 480px; overflow-y: auto;">
+              <div id="containerTimeline" class="panel-body-xl" style="max-height:480px;overflow-y:auto;">
                 <div class="placeholder">Selecione uma OP acima para visualizar a linha do tempo.</div>
               </div>
             </div>
           </div>
-
-          <!-- Coluna Direita: Ranking -->
-          <div style="flex: 1;">
-            <div class="card" style="padding: 0;">
-              <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 16px; margin: 0; font-weight: 600;">🏆 Ranking de Execução</h2>
-                <select id="selectFiltroProjeto" style="width: auto; padding: 4px 10px; font-size: 12px;" onchange="RelatoriosModule.renderizarRanking()">
+          <div style="flex:1;">
+            <div class="card" style="padding:0;">
+              <div class="panel-header" style="justify-content:space-between;">
+                <h2 class="panel-title"><i class="ph ph-trophy"></i> Ranking de Execução</h2>
+                <select id="selectFiltroProjeto" class="w-auto text-sm" style="padding:4px 10px;" onchange="RelatoriosModule.renderizarRanking()">
                   <option value="">Todos os projetos</option>
                 </select>
               </div>
-              <div id="containerRanking" style="padding: 20px;">
+              <div id="containerRanking" class="panel-body-lg">
                 <div class="placeholder">Aguardando dados...</div>
               </div>
             </div>
@@ -229,76 +192,68 @@
       </div>
     </div>
 
-    <div id="page-usuarios" class="page" style="display:none; flex-direction: row; gap: 24px; width: 100%;">
-      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+    <div id="page-usuarios" class="page page-row hidden">
+      <div class="content content-fluid">
          <h1 class="content-title">Usuários</h1>
          <p class="content-subtitle mb-4">Gerencie usuários e permissões do sistema.</p>
-         <div class="card" style="background: white; border: 1px solid #eef0f2; padding: 0;">
-            <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
-              <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">👥 Usuários do Sistema</h2>
-            </div>
-            <div id="listaUsuarios" style="padding: 20px;"></div>
+         <div class="panel">
+            <div class="panel-header"><i class="ph ph-users"></i> Usuários do Sistema</div>
+            <div id="listaUsuarios" class="panel-body-lg"></div>
          </div>
       </div>
-
-      <div class="content" style="max-width: 35%; flex: 0 0 35%; margin: 0;">
-        <div id="formUsuario" class="card" style="background: #f8f9fa; border: 1px solid #eef0f2; padding: 0;">
-          <div style="padding: 16px 24px; border-bottom: 1px solid #eef0f2;">
-            <h2 style="font-size: 16px; margin: 0; font-weight: 500; color: #333;">Novo Usuário</h2>
-          </div>
-          <div style="padding: 24px;">
+      <div class="content content-sidebar">
+        <div id="formUsuario" class="card card-form">
+          <div class="panel-header"><h2 class="panel-title">Novo Usuário</h2></div>
+          <div class="panel-body-xl">
             <div class="field">
-              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">Nome de Usuário</label>
-              <input type="text" id="inputNomeUsuario" style="background: white; border: 1px solid #ddd;" />
+              <label class="label-uppercase">Nome de Usuário</label>
+              <input type="text" id="inputNomeUsuario" class="input-white" />
             </div>
             <div class="field">
-              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">Senha</label>
-              <input type="password" id="inputSenhaUsuario" style="background: white; border: 1px solid #ddd;" />
+              <label class="label-uppercase">Senha</label>
+              <input type="password" id="inputSenhaUsuario" class="input-white" />
             </div>
             <div class="field">
-              <label style="font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">Perfil (Role)</label>
-              <select id="selectRoleUsuario" style="background: white; border: 1px solid #ddd;">
+              <label class="label-uppercase">Perfil (Role)</label>
+              <select id="selectRoleUsuario" class="input-white">
                 <option value="operador">Operador</option>
                 <option value="gestor">Gestor</option>
               </select>
             </div>
             <div class="flex mt-6">
-              <button class="btn btn-primary btn-lg" id="btnSalvarUsuario" style="background: var(--primary-500); padding: 10px 24px; font-size: 14px; border-radius: 6px; width: 100%;">Salvar Usuário</button>
+              <button class="btn btn-primary btn-lg w-full" id="btnSalvarUsuario"><i class="ph ph-user-plus"></i> Salvar Usuário</button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div id="page-gerencial" class="page" style="display:none; flex-direction: column; width: 100%;">
-      <div class="content" style="flex: 1; margin: 0; max-width: none;">
+    <div id="page-gerencial" class="page page-col hidden">
+      <div class="content content-fluid">
         <div class="flex justify-between items-center mb-6">
           <div>
-            <h1 class="content-title">⚙️ Ferramentas Gerenciais</h1>
+            <h1 class="content-title"><i class="ph ph-gear"></i> Ferramentas Gerenciais</h1>
             <p class="content-subtitle">Limpeza e administração de dados do sistema.</p>
           </div>
         </div>
-
         <div class="flex gap-4">
-          <div class="card" style="flex: 1; border: none; background: #fce4ec; padding: 24px; text-align: center;">
-            <div style="font-size: 40px; margin-bottom: 12px;">🗑️</div>
-            <h3 style="margin: 0 0 8px; font-size: 16px; color: #c62828;">Eventos</h3>
-            <p style="font-size: 13px; color: #666; margin: 0 0 16px;">Remove todos os registros de eventos operacionais.</p>
-            <button class="btn btn-danger" onclick="GerencialModule.limpar('eventos', this)" style="width: 100%;">Limpar Eventos</button>
+          <div class="card cleanup-card" style="background:#fce4ec;">
+            <div class="cleanup-icon"><i class="ph ph-trash"></i></div>
+            <h3 class="cleanup-title" style="color:#c62828;">Eventos</h3>
+            <p class="cleanup-desc">Remove todos os registros de eventos operacionais.</p>
+            <button class="btn btn-danger w-full" onclick="GerencialModule.limpar('eventos', this)"><i class="ph ph-trash"></i> Limpar Eventos</button>
           </div>
-
-          <div class="card" style="flex: 1; border: none; background: #fff3e0; padding: 24px; text-align: center;">
-            <div style="font-size: 40px; margin-bottom: 12px;">🗑️</div>
-            <h3 style="margin: 0 0 8px; font-size: 16px; color: #e65100;">Ordens de Produção</h3>
-            <p style="font-size: 13px; color: #666; margin: 0 0 16px;">Remove todas as ordens de produção do sistema.</p>
-            <button class="btn btn-danger" onclick="GerencialModule.limpar('ops', this)" style="width: 100%;">Limpar OPs</button>
+          <div class="card cleanup-card" style="background:#fff3e0;">
+            <div class="cleanup-icon"><i class="ph ph-trash"></i></div>
+            <h3 class="cleanup-title" style="color:#e65100;">Ordens de Produção</h3>
+            <p class="cleanup-desc">Remove todas as ordens de produção do sistema.</p>
+            <button class="btn btn-danger w-full" onclick="GerencialModule.limpar('ops', this)"><i class="ph ph-trash"></i> Limpar OPs</button>
           </div>
-
-          <div class="card" style="flex: 1; border: none; background: #e8f5e9; padding: 24px; text-align: center;">
-            <div style="font-size: 40px; margin-bottom: 12px;">🗑️</div>
-            <h3 style="margin: 0 0 8px; font-size: 16px; color: #2e7d32;">Projetos</h3>
-            <p style="font-size: 13px; color: #666; margin: 0 0 16px;">Remove todos os projetos e suas tarefas/materiais.</p>
-            <button class="btn btn-danger" onclick="GerencialModule.limpar('projetos', this)" style="width: 100%;">Limpar Projetos</button>
+          <div class="card cleanup-card" style="background:#e8f5e9;">
+            <div class="cleanup-icon"><i class="ph ph-trash"></i></div>
+            <h3 class="cleanup-title" style="color:#2e7d32;">Projetos</h3>
+            <p class="cleanup-desc">Remove todos os projetos e suas tarefas/materiais.</p>
+            <button class="btn btn-danger w-full" onclick="GerencialModule.limpar('projetos', this)"><i class="ph ph-trash"></i> Limpar Projetos</button>
           </div>
         </div>
       </div>
@@ -314,13 +269,14 @@
     var targetPage = document.getElementById('page-' + page);
     targetPage.style.display = 'flex';
 
-    // Se ativar OP, popular select de projetos
     if (page === 'ops' && window.carregarProjetosParaSelect) {
       window.carregarProjetosParaSelect();
     }
+    document.getElementById('adminNav').classList.remove('open');
   }
   document.getElementById('btnLogout').addEventListener('click', function () { sessionStorage.removeItem('usuario'); mostrarLogin(); });
   document.querySelectorAll('.nav-item').forEach(function (item) { item.addEventListener('click', function () { ativarPagina(this.getAttribute('data-page')); }); });
+  document.getElementById('menuToggle').addEventListener('click', function () { document.getElementById('adminNav').classList.toggle('open'); });
 
   (function OpsModule() {
     function carregarOps() {
@@ -353,9 +309,9 @@
 
     function renderTabela(lista, podeCancelar) {
       if (lista.length === 0) return '<p class="text-muted">Nenhuma OP encontrada.</p>';
-      var html = '<table><thead><tr><th>Projeto</th><th>Status</th><th>Qtd</th><th style="text-align:right">Ações</th></tr></thead><tbody>';
+      var html = '<table><thead><tr><th>Projeto</th><th>Status</th><th>Qtd</th><th class="text-right">Ações</th></tr></thead><tbody>';
       lista.forEach(function(o) {
-        html += '<tr><td><strong>' + o.nome_projeto + '</strong></td><td>' + o.status + '</td><td>' + o.quantidade_realizada + '/' + o.quantidade_total + '</td><td style="text-align:right">';
+        html += '<tr><td><strong>' + o.nome_projeto + '</strong></td><td>' + o.status + '</td><td>' + o.quantidade_realizada + '/' + o.quantidade_total + '</td><td class="text-right">';
         if (podeCancelar) html += '<button class="btn btn-danger btn-sm" onclick="cancelarOp(' + o.id + ')">Cancelar</button>';
         html += '</td></tr>';
       });
@@ -426,7 +382,7 @@
         return;
       }
 
-      var html = '<table><thead><tr><th>Projeto</th><th>Materiais</th><th>Tarefas</th><th style="text-align:right">Ações</th></tr></thead><tbody>';
+      var html = '<table><thead><tr><th>Projeto</th><th>Materiais</th><th>Tarefas</th><th class="text-right">Ações</th></tr></thead><tbody>';
       projetos.forEach(function(p) {
         var qtdMateriais = p.materiais ? p.materiais.length : 0;
         var qtdTarefas = p.tarefas ? p.tarefas.length : 0;
@@ -435,7 +391,7 @@
           '<td><strong>' + p.nome + '</strong></td>' +
           '<td><span class="badge badge-info">' + qtdMateriais + '</span></td>' +
           '<td><span class="badge badge-success">' + qtdTarefas + '</span></td>' +
-          '<td style="text-align:right">' +
+          '<td class="text-right">' +
             '<button class="btn btn-secondary btn-sm" onclick="showToast(\'Edição em breve\', \'info\')">Ver</button>' +
           '</td>' +
         '</tr>';
@@ -456,13 +412,13 @@
           nome: el.querySelector('.mat-nome').value,
           quantidade: el.querySelector('.mat-qtd').value
         })).filter(m => m.nome),
-        tarefas: Array.from(document.querySelectorAll('#tarefasList .dynamic-item')).map(el => ({
+        tarefas: Array.from(document.querySelectorAll('#tarefasList .dynamic-item-task')).map(el => ({
           nome: el.querySelector('.tar-nome').value,
           descricao: el.querySelector('.tar-desc').value,
           links: el.querySelector('.tar-links').value
         })).filter(t => t.nome)
       };
-
+      console.log(data)
       if (data.materiais.length === 0 || data.tarefas.length === 0) {
         showToast('O projeto deve ter no mínimo 1 material e 1 tarefa.', 'warning');
         btn.innerText = originalText;
@@ -494,38 +450,23 @@
 
     function resetarFormProjeto() {
       document.getElementById('inputNomeProjeto').value = '';
-      document.getElementById('materiaisList').innerHTML = '<li class="dynamic-item" style="gap: 8px; margin-bottom: 8px;"><input type="text" placeholder="Nome" class="mat-nome" style="background: white; border: 1px solid #ddd;" /><input type="text" placeholder="Qtd" class="mat-qtd" style="background: white; border: 1px solid #ddd; max-width: 60px;" /><button class="btn btn-sm" onclick="removeDynamicField(this)" style="color: #c0392b; background: transparent; font-weight: bold;">X</button></li>';
-      document.getElementById('tarefasList').innerHTML = '<li class="dynamic-item" style="flex-direction: column; align-items: stretch; background: white; border: 1px solid #eee; padding: 12px; border-radius: 8px; position: relative; margin-bottom: 12px;"><button class="btn btn-sm" onclick="removeDynamicField(this)" style="position: absolute; top: 5px; right: 5px; color: #c0392b; background: transparent;">X</button><input type="text" placeholder="Título" class="tar-nome mb-2" style="background: white; border: 1px solid #ddd; font-size: 12px;" /><textarea placeholder="Instrução" class="tar-desc" style="background: white; border: 1px solid #ddd; min-height: 40px; font-size: 11px;"></textarea><textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2" style="background: white; border: 1px solid #ddd; font-size: 11px;"></textarea></li>';
+      document.getElementById('materiaisList').innerHTML = '<li class="dynamic-item"><input type="text" placeholder="Nome" class="mat-nome input-white" /><input type="text" placeholder="Qtd" class="mat-qtd input-white" style="max-width:60px;" /><button class="btn btn-icon dynamic-remove" onclick="removeDynamicField(this)">X</button></li>';
+      document.getElementById('tarefasList').innerHTML = '<li class="dynamic-item-task dynamic-item"><button class="btn btn-sm dynamic-remove" onclick="removeDynamicField(this)">X</button><input type="text" placeholder="Título" class="tar-nome mb-2 input-white text-sm" /><textarea placeholder="Instrução" class="tar-desc input-white" style="min-height:40px;font-size:11px;"></textarea><textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2 input-white" style="font-size:11px;"></textarea></li>';
     }
 
     window.addMaterialField = function() {
       var ul = document.getElementById('materiaisList');
       var li = document.createElement('li');
       li.className = 'dynamic-item';
-      li.style.gap = '8px';
-      li.style.marginBottom = '8px';
-      li.innerHTML = '<input type="text" placeholder="Nome" class="mat-nome" style="background: white; border: 1px solid #ddd;" /> <input type="text" placeholder="Qtd" class="mat-qtd" style="background: white; border: 1px solid #ddd; max-width: 60px;" /> <button class="btn btn-sm" onclick="removeDynamicField(this)" style="color: #c0392b; background: transparent; font-weight: bold;">X</button>';
+      li.innerHTML = '<input type="text" placeholder="Nome" class="mat-nome input-white" /> <input type="text" placeholder="Qtd" class="mat-qtd input-white" style="max-width:60px;" /> <button class="btn btn-icon dynamic-remove" onclick="removeDynamicField(this)">X</button>';
       ul.appendChild(li);
     };
     
     window.addTaskField = function() {
       var ul = document.getElementById('tarefasList');
       var li = document.createElement('li');
-      li.className = 'dynamic-item';
-      li.style.flexDirection = 'column';
-      li.style.alignItems = 'stretch';
-      li.style.background = 'white';
-      li.style.border = '1px solid #eee';
-      li.style.padding = '12px';
-      li.style.borderRadius = '8px';
-      li.style.position = 'relative';
-      li.style.marginBottom = '12px';
-      li.innerHTML = `
-        <button class="btn btn-sm" onclick="removeDynamicField(this)" style="position: absolute; top: 5px; right: 5px; color: #c0392b; background: transparent;">X</button>
-        <input type="text" placeholder="Título" class="tar-nome mb-2" style="background: white; border: 1px solid #ddd; font-size: 12px;" />
-        <textarea placeholder="Instrução" class="tar-desc" style="background: white; border: 1px solid #ddd; min-height: 40px; font-size: 11px;"></textarea>
-        <textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2" style="background: white; border: 1px solid #ddd; font-size: 11px;"></textarea>
-      `;
+      li.className = 'dynamic-item-task dynamic-item';
+      li.innerHTML = '<button class="btn btn-sm dynamic-remove" onclick="removeDynamicField(this)">X</button><input type="text" placeholder="Título" class="tar-nome mb-2 input-white text-sm" /><textarea placeholder="Instrução" class="tar-desc input-white" style="min-height:40px;font-size:11px;"></textarea><textarea placeholder="Links (um por linha, opcional)" class="tar-links mt-2 input-white" style="font-size:11px;"></textarea>';
       ul.appendChild(li);
     };
 
@@ -551,7 +492,7 @@
         return;
       }
 
-      var html = '<table><thead><tr><th>Nome</th><th>Perfil</th><th>Status</th><th style="text-align:right">Ações</th></tr></thead><tbody>';
+      var html = '<table><thead><tr><th>Nome</th><th>Perfil</th><th>Status</th><th class="text-right">Ações</th></tr></thead><tbody>';
       usuarios.forEach(function(u) {
         var statusBadge = u.ativo ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-error">Inativo</span>';
         var statusBtnText = u.ativo ? 'Desativar' : 'Ativar';
@@ -561,7 +502,7 @@
           '<td><strong>' + u.nome + '</strong></td>' +
           '<td>' + u.role + '</td>' +
           '<td>' + statusBadge + '</td>' +
-          '<td style="text-align:right">' +
+          '<td class="text-right">' +
             '<div class="flex gap-1 justify-end">' +
               '<button class="btn btn-sm ' + statusBtnClass + '" onclick="alternarStatusUsuario(' + u.id + ', ' + !u.ativo + ')">' + statusBtnText + '</button>' +
               '<button class="btn btn-danger btn-sm" onclick="removerUsuario(' + u.id + ')">Excluir</button>' +
@@ -744,7 +685,7 @@
       var elProj = document.getElementById('metric-projeto-complexo');
       if (projNomes.length > 0) {
         projNomes.sort(function(a, b) { return projetosMedians[b] - projetosMedians[a]; });
-        elProj.innerHTML = '<span style="font-size:15px;font-weight:600;">' + projNomes[0] + '</span><br><span style="font-size:11px;color:#666;">' + Math.round(projetosMedians[projNomes[0]] / 60) + ' min med. / tarefa</span>';
+        elProj.innerHTML = '<div class="text-lg font-semibold">' + projNomes[0] + '</div><div class="text-xs text-muted mt-1">' + Math.round(projetosMedians[projNomes[0]] / 60) + ' min med. / tarefa</div>';
       }
 
       // 6. OPs em Andamento
@@ -769,7 +710,7 @@
       });
       var nomes = Object.keys(contagem).sort(function(a, b) { return contagem[b] - contagem[a]; });
       if (nomes.length === 0) {
-        document.getElementById('chart-tarefas-operador').innerHTML = '<div class="placeholder" style="height:305px;display:flex;align-items:center;justify-content:center;">Sem dados disponíveis</div>';
+        document.getElementById('chart-tarefas-operador').innerHTML = '<div class="placeholder chart-area">Sem dados disponíveis</div>';
         return;
       }
       var data = new google.visualization.DataTable();
@@ -800,7 +741,7 @@
       });
       var nomes = Object.keys(operadores);
       if (nomes.length === 0) {
-        document.getElementById('chart-tempo-operador').innerHTML = '<div class="placeholder" style="height:305px;display:flex;align-items:center;justify-content:center;">Sem dados disponíveis</div>';
+        document.getElementById('chart-tempo-operador').innerHTML = '<div class="placeholder chart-area">Sem dados disponíveis</div>';
         return;
       }
       var data = new google.visualization.DataTable();
@@ -838,7 +779,7 @@
       });
       var nomes = Object.keys(projetosMedians);
       if (nomes.length === 0) {
-        document.getElementById('chart-mediana-projeto').innerHTML = '<div class="placeholder" style="height:305px;display:flex;align-items:center;justify-content:center;">Sem dados disponíveis</div>';
+        document.getElementById('chart-mediana-projeto').innerHTML = '<div class="placeholder chart-area">Sem dados disponíveis</div>';
         return;
       }
       var data = new google.visualization.DataTable();
@@ -876,7 +817,7 @@
       });
       var nomes = Object.keys(operadores);
       if (nomes.length === 0) {
-        document.getElementById('chart-produtivo-pausa').innerHTML = '<div class="placeholder" style="height:305px;display:flex;align-items:center;justify-content:center;">Sem dados disponíveis</div>';
+        document.getElementById('chart-produtivo-pausa').innerHTML = '<div class="placeholder chart-area">Sem dados disponíveis</div>';
         return;
       }
       var data = new google.visualization.DataTable();
@@ -943,30 +884,30 @@
         grupos[chave].eventos.push(e);
       });
 
-      var html = '<div style="border-left: 2px solid #eee; padding-left: 20px; margin-left: 10px;">';
+      var html = '<div class="timeline">';
       Object.keys(grupos).forEach(function(chave) {
         var grupo = grupos[chave];
-        html += '<div style="margin-bottom: 20px;">';
-        html += '<div style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; margin-bottom: 12px; padding: 4px 10px; background: #f5f5f5; border-radius: 4px; display: inline-block;">' + grupo.nome + '</div>';
+        html += '<div class="timeline-group">';
+        html += '<div class="timeline-group-label">' + grupo.nome + '</div>';
         grupo.eventos.forEach(function(e) {
-          var cor = '#4a77d4';
-          if (e.tipo === 'pausa') cor = '#f9a825';
-          if (e.tipo === 'conclusao') cor = '#1db954';
-          if (e.tipo === 'retomada') cor = '#00bcd4';
+          var dotColor = '#4a77d4';
+          if (e.tipo === 'pausa') dotColor = '#f9a825';
+          if (e.tipo === 'conclusao') dotColor = '#1db954';
+          if (e.tipo === 'retomada') dotColor = '#00bcd4';
           var dataHora = new Date(e.timestamp_inicio).toLocaleTimeString();
-          var icone = '▶';
-          if (e.tipo === 'pausa') icone = '⏸';
-          if (e.tipo === 'retomada') icone = '▶';
-          if (e.tipo === 'conclusao') icone = '✅';
-          html += '<div style="position: relative; margin-bottom: 16px;">';
-          html += '<div style="position: absolute; left: -26px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: ' + cor + '; border: 2px solid white;"></div>';
-          html += '<div style="font-size: 11px; color: #999; margin-bottom: 2px;">' + dataHora + ' • ' + (e.usuario_nome || 'Sistema') + '</div>';
-          html += '<div style="font-weight: 600; text-transform: uppercase; font-size: 13px;">' + icone + ' ' + e.tipo + '</div>';
+          var iconHtml = '<i class="ph ph-play"></i>';
+          if (e.tipo === 'pausa') iconHtml = '<i class="ph ph-pause"></i>';
+          if (e.tipo === 'retomada') iconHtml = '<i class="ph ph-play"></i>';
+          if (e.tipo === 'conclusao') iconHtml = '<i class="ph ph-check-circle"></i>';
+          html += '<div class="timeline-event">';
+          html += '<div class="timeline-dot" style="background:' + dotColor + ';"></div>';
+          html += '<div class="timeline-time">' + dataHora + ' &bull; ' + (e.usuario_nome || 'Sistema') + '</div>';
+          html += '<div class="timeline-action">' + iconHtml + ' ' + e.tipo + '</div>';
           if (e.observacao) {
-            html += '<div style="font-size: 13px; color: #555; margin-top: 2px;">💬 ' + e.observacao + '</div>';
+            html += '<div class="timeline-note"><i class="ph ph-chat-circle-dots"></i> ' + e.observacao + '</div>';
           }
           if (e.duracao_segundos > 0) {
-            html += '<div class="badge badge-info" style="margin-top:4px">⏱ ' + Math.round(e.duracao_segundos / 60) + ' min</div>';
+            html += '<span class="badge badge-info timeline-badge"><i class="ph ph-timer"></i> ' + Math.round(e.duracao_segundos / 60) + ' min</span>';
           }
           html += '</div>';
         });
@@ -1032,14 +973,14 @@
       var maxTarefas = ranking.length > 0 ? ranking[0].tarefas : 0;
       var html = '<table><thead><tr><th>Operador</th><th style="text-align:right">Tarefas</th><th style="text-align:right">Tempo Médio</th><th style="text-align:right">Eficiência</th></tr></thead><tbody>';
       ranking.forEach(function(r) {
-        var destaque = r.tarefas === maxTarefas && ranking.length > 1 ? '⭐ ' : '';
+        var destaque = r.tarefas === maxTarefas && ranking.length > 1 ? '<i class="ph ph-star"></i> ' : '';
         var efDisplay = r.eficiencia !== null ? r.eficiencia + '%' : '--';
         var efBadge = r.eficiencia !== null ? (r.eficiencia >= 75 ? 'badge-success' : r.eficiencia >= 50 ? 'badge-warning' : 'badge-error') : '';
         html += '<tr>' +
           '<td><strong>' + destaque + r.nome + '</strong></td>' +
           '<td style="text-align:right"><span class="badge badge-success">' + r.tarefas + '</span></td>' +
-          '<td style="text-align:right">' + r.tempoMedio + ' min</td>' +
-          '<td style="text-align:right">' + (efBadge ? '<span class="badge ' + efBadge + '">' + efDisplay + '</span>' : efDisplay) + '</td>' +
+          '<td class="text-right">' + r.tempoMedio + ' min</td>' +
+          '<td class="text-right">' + (efBadge ? '<span class="badge ' + efBadge + '">' + efDisplay + '</span>' : efDisplay) + '</td>' +
           '</tr>';
       });
       container.innerHTML = html + '</tbody></table>';
