@@ -7,36 +7,52 @@
       </div>
     </div>
     <div class="header-right">
-      <span id="opUserName" class="user-name" style="color:white; margin-right: 15px;"></span>
-      <button class="btn btn-secondary" id="btnOpLogout">Sair</button>
+      <span class="user-avatar" id="opUserAvatar">U</span>
+      <span id="opUserName" class="user-name"></span>
+      <button class="btn btn-header-action" id="btnOpLogout"><i class="ph ph-sign-out"></i> Sair</button>
+    </div>
+  </div>
+
+  <div class="stepper" id="stepper">
+    <div class="step active" data-step="lista">
+      <div class="step-number">1</div>
+      <div class="step-label">OP</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" data-step="materiais">
+      <div class="step-number">2</div>
+      <div class="step-label">Materiais</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" data-step="tarefas">
+      <div class="step-number">3</div>
+      <div class="step-label">Tarefas</div>
     </div>
   </div>
 
   <div class="main">
-    <div class="content" style="max-width: 65vw;">
-      
-      <!-- PAGINA: LISTA DE OPS -->
-      <div id="page-op-lista" class="page">
+    <div class="content content-fluid">
+
+      <div id="page-op-lista" class="page page-col">
         <div class="flex justify-between items-center mb-4">
           <div>
             <h1 class="content-title">Ordens de Produção</h1>
             <p class="content-subtitle">Selecione uma OP para iniciar o trabalho.</p>
           </div>
-          <button class="btn btn-secondary" onclick="OperadorModule.carregarOps()">🔄 Atualizar</button>
+          <button class="btn btn-secondary" onclick="OperadorModule.carregarOps()"><i class="ph ph-arrows-clockwise"></i> Atualizar</button>
         </div>
         <div id="listaOpsDisponiveis">
           <div class="placeholder">Carregando ordens de produção...</div>
         </div>
       </div>
 
-      <!-- PAGINA: CHECKLIST DE MATERIAIS -->
-      <div id="page-op-materiais" class="page" style="display:none">
+      <div id="page-op-materiais" class="page page-col hidden">
         <div class="flex justify-between items-center mb-4">
           <div>
             <h1 class="content-title" id="materiaisOpTitle">Materiais Necessários</h1>
             <p class="content-subtitle">Verifique se todos os materiais estão disponíveis antes de iniciar.</p>
           </div>
-          <button class="btn btn-secondary" onclick="OperadorModule.voltarParaLista()">⬅ Voltar</button>
+          <button class="btn btn-secondary" onclick="OperadorModule.voltarParaLista()"><i class="ph ph-arrow-left"></i> Voltar</button>
         </div>
         <div class="card mb-4">
           <div id="listaMateriaisCheck">
@@ -44,50 +60,46 @@
           </div>
         </div>
         <div class="flex justify-center mt-4">
-          <button class="btn btn-primary btn-lg" id="btnConfirmarMateriais" style="padding: 12px 40px; font-size: 16px;">
-            Confirmar e Ir para Tarefas
-          </button>
+          <button class="btn btn-primary btn-lg" id="btnConfirmarMateriais"><i class="ph ph-check-circle"></i> Confirmar e Ir para Tarefas</button>
         </div>
       </div>
 
-      <!-- PAGINA: EXECUÇÃO DE TAREFAS -->
-      <div id="page-op-tarefas" class="page" style="display:none">
+      <div id="page-op-tarefas" class="page page-col hidden">
         <div class="flex justify-between items-center mb-4">
           <div>
             <h1 class="content-title" id="tarefaOpTitle">Execução de Tarefas</h1>
             <p class="content-subtitle" id="tarefaOpSubtitle">Siga as instruções abaixo para completar a tarefa.</p>
           </div>
-          <button class="btn btn-secondary" id="btnAbandonarTarefa">Sair da OP</button>
+          <button class="btn btn-secondary" id="btnAbandonarTarefa"><i class="ph ph-x-circle"></i> Sair da OP</button>
         </div>
 
         <div class="card mb-4" id="cardTarefa">
             <div class="flex justify-between items-start mb-4">
-                <div style="flex: 1;">
-                    <h2 id="nomeTarefaAtual" style="color: var(--color-primary); margin-bottom: 4px;">Nome da Tarefa</h2>
+                <div class="flex-1">
+                    <h2 id="nomeTarefaAtual" class="text-lg font-semibold" style="color:var(--color-primary);margin-bottom:4px;">Nome da Tarefa</h2>
                     <p id="descTarefaAtual" class="text-secondary">Descrição detalhada da tarefa aqui.</p>
                 </div>
-                <div class="text-center" style="min-width: 150px; background: var(--bg-warm); padding: 15px; border-radius: 12px; border: 1px solid var(--primary-200);">
-                    <div style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Tempo Decorrido</div>
-                    <div id="timerDisplay" style="font-size: 32px; font-weight: 700; font-family: monospace; color: var(--primary-900);">00:00:00</div>
+                <div class="timer-display">
+                    <div class="timer-label">Tempo Decorrido</div>
+                    <div id="timerDisplay" class="timer-value">00:00:00</div>
                 </div>
             </div>
 
-            <div id="linksTarefaContainer" class="mb-4" style="display:none">
-                <h4 style="font-size: 14px; margin-bottom: 8px;">Links de Referência:</h4>
+            <div id="linksTarefaContainer" class="mb-4 hidden">
+                <h4 class="text-md font-semibold mb-2">Links de Referência:</h4>
                 <div id="listaLinksTarefa" class="flex gap-2 flex-wrap"></div>
             </div>
 
             <div class="alert alert-info" id="statusTarefaInfo">Tarefa pronta para iniciar.</div>
 
             <div class="flex gap-2 justify-center mt-4">
-                <button class="btn btn-accent btn-lg" id="btnIniciarTarefa" style="padding: 12px 30px;">▶ Iniciar Tarefa</button>
-                <button class="btn btn-warning btn-lg" id="btnPausarTarefa" style="padding: 12px 30px; display:none">⏸ Pausar</button>
-                <button class="btn btn-primary btn-lg" id="btnRetomarTarefa" style="padding: 12px 30px; display:none">▶ Retomar</button>
-                <button class="btn btn-success btn-lg" id="btnFinalizarTarefa" style="padding: 12px 30px; display:none">✅ Concluir Tarefa</button>
+                <button class="btn btn-accent btn-lg" id="btnIniciarTarefa"><i class="ph ph-play"></i> Iniciar Tarefa</button>
+                <button class="btn btn-warning btn-lg hidden" id="btnPausarTarefa"><i class="ph ph-pause"></i> Pausar</button>
+                <button class="btn btn-primary btn-lg hidden" id="btnRetomarTarefa"><i class="ph ph-play"></i> Retomar</button>
+                <button class="btn btn-success btn-lg hidden" id="btnFinalizarTarefa"><i class="ph ph-check-circle"></i> Concluir Tarefa</button>
             </div>
         </div>
 
-        <!-- LISTA DE PROGRESSO DE TAREFAS -->
         <h4 class="mb-2">Progresso da OP</h4>
         <div id="progressoTarefas" class="flex gap-1 mb-4"></div>
       </div>
@@ -95,59 +107,64 @@
     </div>
   </div>
 
-  <!-- MODAL: JUSTIFICATIVA DE PAUSA -->
-  <div id="modalPausa" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-      <div class="card" style="width: 400px; padding: 24px;">
-          <h3>Pausar Tarefa</h3>
-          <p class="text-secondary mb-3">Por favor, justifique o motivo da pausa:</p>
-          <div class="field">
-              <textarea id="inputJustificativaPausa" placeholder="Ex: Intervalo para almoço, falta de material, ajuste de máquina..." style="min-height: 80px;"></textarea>
-          </div>
-          <div class="flex gap-2 justify-end">
-              <button class="btn btn-secondary" onclick="OperadorModule.fecharModalPausa()">Cancelar</button>
-              <button class="btn btn-primary" onclick="OperadorModule.confirmarPausa()">Confirmar Pausa</button>
-          </div>
+  <div id="modalPausa" class="modal-overlay">
+    <div class="modal">
+      <h3 class="modal-title">Pausar Tarefa</h3>
+      <div class="modal-body">
+        <p class="text-secondary mb-3">Por favor, justifique o motivo da pausa:</p>
+        <textarea id="inputJustificativaPausa" placeholder="Ex: Intervalo para almoço, falta de material, ajuste de máquina..." style="min-height:80px;"></textarea>
       </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="OperadorModule.fecharModalPausa()">Cancelar</button>
+        <button class="btn btn-primary" onclick="OperadorModule.confirmarPausa()">Confirmar Pausa</button>
+      </div>
+    </div>
   </div>
 
-  <!-- MODAL: OBSERVAÇÃO DE CONCLUSÃO -->
-  <div id="modalConclusao" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-      <div class="card" style="width: 400px; padding: 24px;">
-          <h3>Concluir Tarefa</h3>
-          <p class="text-secondary mb-3">Deseja adicionar alguma observação sobre a execução?</p>
-          <div class="field">
-              <textarea id="inputObservacaoConclusao" placeholder="Opcional: Informe qualquer imprevisto ou detalhe relevante..." style="min-height: 80px;"></textarea>
-          </div>
-          <div class="flex gap-2 justify-end">
-              <button class="btn btn-secondary" onclick="OperadorModule.fecharModalConclusao()">Cancelar</button>
-              <button class="btn btn-success" onclick="OperadorModule.confirmarConclusao()">Finalizar Tarefa</button>
-          </div>
+  <div id="modalConclusao" class="modal-overlay">
+    <div class="modal">
+      <h3 class="modal-title">Concluir Tarefa</h3>
+      <div class="modal-body">
+        <p class="text-secondary mb-3">Deseja adicionar alguma observação sobre a execução?</p>
+        <textarea id="inputObservacaoConclusao" placeholder="Opcional: Informe qualquer imprevisto ou detalhe relevante..." style="min-height:80px;"></textarea>
       </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="OperadorModule.fecharModalConclusao()">Cancelar</button>
+        <button class="btn btn-success" onclick="OperadorModule.confirmarConclusao()">Finalizar Tarefa</button>
+      </div>
+    </div>
   </div>
-
 </div>
 
 <script>
+  function atualizarStepper(stepId) {
+    var steps = ['lista', 'materiais', 'tarefas'];
+    document.querySelectorAll('#stepper .step').forEach(function(s) {
+      var page = s.getAttribute('data-step');
+      var idx = steps.indexOf(page);
+      var currentIdx = steps.indexOf(stepId);
+      s.classList.remove('active', 'done');
+      if (idx < currentIdx) s.classList.add('done');
+      if (idx === currentIdx) s.classList.add('active');
+    });
+  }
+
   var OperadorModule = (function() {
     var opSelecionada = null;
     var projetoAtual = null;
     var tarefaIndice = 0;
-    
-    // Timer & Transactional Event States
     var timerInterval = null;
     var segundosDecorridos = 0;
-    var statusExecucao = 'idle'; 
-    var bufferEventos = []; // Buffer de eventos da tarefa atual
+    var statusExecucao = 'idle';
+    var bufferEventos = [];
 
     function inicializar() {
       var user = JSON.parse(sessionStorage.getItem('usuario'));
       if (user) {
         document.getElementById('opUserName').innerText = user.nome;
+        document.getElementById('opUserAvatar').innerText = user.nome.charAt(0).toUpperCase();
       }
-      
-      // Tentar recuperar estado anterior se a página foi recarregada
       recuperarEstado();
-      
       if (!opSelecionada) {
         carregarOps();
       }
@@ -170,7 +187,6 @@
     function recuperarEstado() {
         var salvo = sessionStorage.getItem('operador_estado');
         if (!salvo) return;
-        
         var estado = JSON.parse(salvo);
         opSelecionada = estado.opSelecionada;
         projetoAtual = estado.projetoAtual;
@@ -179,15 +195,13 @@
         statusExecucao = estado.statusExecucao;
         bufferEventos = estado.bufferEventos;
 
-        // Se estava no meio de uma OP, reconstruir UI
         if (opSelecionada) {
-            document.getElementById('page-op-lista').style.display = 'none';
-            document.getElementById('page-op-tarefas').style.display = 'block';
+            document.getElementById('page-op-lista').classList.add('hidden');
+            document.getElementById('page-op-tarefas').classList.remove('hidden');
             document.getElementById('tarefaOpTitle').innerText = opSelecionada.nome_projeto;
-            carregarTarefaAtual(true); // true = carregamento silencioso/recuperação
-
+            carregarTarefaAtual(true);
+            atualizarStepper('tarefas');
             if (statusExecucao === 'running') {
-                // Compensar tempo se o navegador ficou fechado
                 var delta = Math.floor((Date.now() - estado.timestampSessao) / 1000);
                 segundosDecorridos += delta;
                 retomarInterfaceExecucao();
@@ -203,7 +217,6 @@
         document.getElementById('btnRetomarTarefa').onclick = retomarTarefa;
         document.getElementById('btnFinalizarTarefa').onclick = abrirModalConclusao;
         document.getElementById('btnAbandonarTarefa').onclick = abandonarOp;
-        
         document.getElementById('btnOpLogout').onclick = function() {
             if (statusExecucao !== 'idle' && !confirm('Uma tarefa está em andamento. Ao sair agora, os dados não sincronizados desta tarefa serão perdidos. Deseja sair mesmo assim?')) return;
             clearInterval(timerInterval);
@@ -212,8 +225,6 @@
             mostrarLogin();
         };
     }
-
-    // --- LOGICA DE EVENTOS (TRANSACIONAL) ---
 
     function adicionarEventoAoBuffer(tipo, obs) {
         var user = JSON.parse(sessionStorage.getItem('usuario')) || { id: 0, nome: 'Desconhecido' };
@@ -247,19 +258,19 @@
         document.getElementById('listaOpsDisponiveis').innerHTML = '<div class="placeholder">Nenhuma ordem de produção ativa.</div>';
         return;
       }
-      var html = '<table><thead><tr><th>ID</th><th>Projeto</th><th>Progresso</th><th>Ações</th></tr></thead><tbody>';
+      var html = '<table><thead><tr><th>ID</th><th>Projeto</th><th>Progresso</th><th class="text-right">Ações</th></tr></thead><tbody>';
       ativas.forEach(function(o) {
         var progresso = Math.round((o.quantidade_realizada / o.quantidade_total) * 100) || 0;
         html += `<tr>
           <td>#${o.id}</td>
           <td><strong>${o.nome_projeto}</strong></td>
           <td>
-            <div style="width: 100%; background: #eee; height: 8px; border-radius: 4px; margin-bottom: 4px;">
-              <div style="width: ${progresso}%; background: var(--color-primary); height: 100%; border-radius: 4px;"></div>
+            <div class="progress-bar mb-1">
+              <div class="progress-fill" style="width:${progresso}%;"></div>
             </div>
             <small>${o.quantidade_realizada} / ${o.quantidade_total} un</small>
           </td>
-          <td><button class="btn btn-primary" onclick="OperadorModule.selecionarOp(${JSON.stringify(o).replace(/"/g, '&quot;')})">Trabalhar</button></td>
+          <td class="text-right"><button class="btn btn-primary" onclick="OperadorModule.selecionarOp(${JSON.stringify(o).replace(/"/g, '&quot;')})"><i class="ph ph-play"></i> Trabalhar</button></td>
         </tr>`;
       });
       document.getElementById('listaOpsDisponiveis').innerHTML = html + '</tbody></table>';
@@ -267,10 +278,10 @@
 
     function selecionarOp(op) {
       opSelecionada = op;
-      document.getElementById('page-op-lista').style.display = 'none';
-      document.getElementById('page-op-materiais').style.display = 'block';
+      document.getElementById('page-op-lista').classList.add('hidden');
+      document.getElementById('page-op-materiais').classList.remove('hidden');
       document.getElementById('materiaisOpTitle').innerText = 'Materiais: ' + op.nome_projeto;
-      
+      atualizarStepper('materiais');
       google.script.run.withSuccessHandler(function(res) {
         if (res.sucesso) {
           projetoAtual = res.projeto;
@@ -284,10 +295,21 @@
     }
 
     function renderizarMateriais(materiais) {
+      var html = '<div class="flex flex-col gap-2 p-2">';
       if (!materiais || materiais.length === 0) {
         document.getElementById('listaMateriaisCheck').innerHTML = '<div class="placeholder">Nenhum material cadastrado.</div>';
         return;
-      }
+      } else {
+        materiais.forEach(function(m) {
+          html += `<label class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-label">
+              <div class="checklist-name">${m.nome}</div>
+              <div class="checklist-qty">Quantidade: ${m.quantidade}</div>
+            </div>
+          </label>`;
+        });
+      
       var html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; padding: 10px;">';
       materiais.forEach(function(m) {
         html += `<label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 10px; border-radius: 8px; border: 1px solid #eee;">
@@ -311,9 +333,10 @@
     function irParaTarefas() {
         tarefaIndice = 0;
         bufferEventos = [];
-        document.getElementById('page-op-materiais').style.display = 'none';
-        document.getElementById('page-op-tarefas').style.display = 'block';
+        document.getElementById('page-op-materiais').classList.add('hidden');
+        document.getElementById('page-op-tarefas').classList.remove('hidden');
         document.getElementById('tarefaOpTitle').innerText = opSelecionada.nome_projeto;
+        atualizarStepper('tarefas');
         carregarTarefaAtual();
     }
 
@@ -327,14 +350,14 @@
 
         document.getElementById('nomeTarefaAtual').innerText = (tarefaIndice + 1) + ". " + tarefa.nome;
         document.getElementById('descTarefaAtual').innerText = tarefa.descricao || "Sem descrição disponível.";
-        
+
         var linksContainer = document.getElementById('linksTarefaContainer');
         var linksList = document.getElementById('listaLinksTarefa');
         if (tarefa.links && tarefa.links.length > 0) {
-            linksContainer.style.display = 'block';
-            linksList.innerHTML = tarefa.links.map(l => `<a href="${l}" target="_blank" class="badge badge-info" style="text-decoration:none">🔗 Ver Referência</a>`).join('');
+            linksContainer.classList.remove('hidden');
+            linksList.innerHTML = tarefa.links.map(l => `<a href="${l}" target="_blank" class="badge badge-info" style="text-decoration:none"><i class="ph ph-link"></i> Ver Referência</a>`).join('');
         } else {
-            linksContainer.style.display = 'none';
+            linksContainer.classList.add('hidden');
         }
 
         if (!isRecuperacao) {
@@ -347,7 +370,7 @@
         var html = '';
         projetoAtual.tarefas.forEach(function(t, i) {
             var color = i < tarefaIndice ? 'var(--success)' : (i === tarefaIndice ? 'var(--color-primary)' : '#ddd');
-            html += `<div style="flex: 1; height: 4px; background: ${color}; border-radius: 2px;" title="${t.nome}"></div>`;
+            html += `<div class="progress-task-segment" style="background: ${color};" title="${t.nome}"></div>`;
         });
         document.getElementById('progressoTarefas').innerHTML = html;
     }
@@ -358,11 +381,10 @@
         bufferEventos = [];
         clearInterval(timerInterval);
         atualizarTimerDisplay();
-        
-        document.getElementById('btnIniciarTarefa').style.display = 'block';
-        document.getElementById('btnPausarTarefa').style.display = 'none';
-        document.getElementById('btnRetomarTarefa').style.display = 'none';
-        document.getElementById('btnFinalizarTarefa').style.display = 'none';
+        ['btnIniciarTarefa', 'btnPausarTarefa', 'btnRetomarTarefa', 'btnFinalizarTarefa'].forEach(function(id) {
+          document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById('btnIniciarTarefa').classList.remove('hidden');
         document.getElementById('statusTarefaInfo').innerText = 'Tarefa pronta para iniciar.';
         document.getElementById('statusTarefaInfo').className = 'alert alert-info';
         salvarEstado();
@@ -370,24 +392,25 @@
 
     function retomarInterfaceExecucao() {
         iniciarTimer();
-        document.getElementById('btnIniciarTarefa').style.display = 'none';
-        document.getElementById('btnPausarTarefa').style.display = 'block';
-        document.getElementById('btnFinalizarTarefa').style.display = 'block';
-        document.getElementById('btnRetomarTarefa').style.display = 'none';
+        ['btnIniciarTarefa', 'btnPausarTarefa', 'btnRetomarTarefa', 'btnFinalizarTarefa'].forEach(function(id) {
+          document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById('btnPausarTarefa').classList.remove('hidden');
+        document.getElementById('btnFinalizarTarefa').classList.remove('hidden');
         document.getElementById('statusTarefaInfo').innerText = 'Tarefa em execução...';
         document.getElementById('statusTarefaInfo').className = 'alert alert-success';
     }
 
     function retomarInterfacePausa() {
-        document.getElementById('btnIniciarTarefa').style.display = 'none';
-        document.getElementById('btnPausarTarefa').style.display = 'none';
-        document.getElementById('btnRetomarTarefa').style.display = 'block';
-        document.getElementById('btnFinalizarTarefa').style.display = 'block';
+        ['btnIniciarTarefa', 'btnPausarTarefa', 'btnRetomarTarefa', 'btnFinalizarTarefa'].forEach(function(id) {
+          document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById('btnRetomarTarefa').classList.remove('hidden');
+        document.getElementById('btnFinalizarTarefa').classList.remove('hidden');
         document.getElementById('statusTarefaInfo').innerText = 'Tarefa PAUSADA.';
         document.getElementById('statusTarefaInfo').className = 'alert alert-warning';
     }
 
-    // AÇÕES DE TAREFA (TRANSAÇÃO INSTANTÂNEA)
     function iniciarTarefa() {
         statusExecucao = 'running';
         retomarInterfaceExecucao();
@@ -406,13 +429,11 @@
     function confirmarPausa() {
         var justificativa = document.getElementById('inputJustificativaPausa').value.trim();
         if (!justificativa) { alert('A justificativa é obrigatória.'); return; }
-
         statusExecucao = 'paused';
         clearInterval(timerInterval);
         fecharModalPausa();
         retomarInterfacePausa();
         document.getElementById('statusTarefaInfo').innerText = 'Tarefa PAUSADA: ' + justificativa;
-        
         adicionarEventoAoBuffer('pausa', justificativa);
     }
 
@@ -434,20 +455,15 @@
     function confirmarConclusao() {
         var obs = document.getElementById('inputObservacaoConclusao').value.trim();
         fecharModalConclusao();
-        
-        // Finalizar localmente primeiro
         clearInterval(timerInterval);
         adicionarEventoAoBuffer('conclusao', obs);
-        
-        var modal = document.getElementById('modalConclusao');
         var btn = document.getElementById('btnFinalizarTarefa');
         btn.disabled = true;
-        btn.innerText = '⏳ Sincronizando...';
+        btn.innerHTML = '<i class="ph ph-hourglass-medium"></i> Sincronizando...';
 
-        // Enviar lote ao servidor
         google.script.run.withSuccessHandler(function(res) {
             btn.disabled = false;
-            btn.innerText = '✅ Concluir Tarefa';
+            btn.innerHTML = '<i class="ph ph-check-circle"></i> Concluir Tarefa';
             if (res.sucesso) {
                 tarefaIndice++;
                 bufferEventos = [];
@@ -461,13 +477,12 @@
         }).registrarLoteEventos(bufferEventos);
     }
 
-    // TIMER LOGIC
     function iniciarTimer() {
         clearInterval(timerInterval);
         timerInterval = setInterval(function() {
             segundosDecorridos++;
             atualizarTimerDisplay();
-            if (segundosDecorridos % 10 === 0) salvarEstado(); // Auto-save a cada 10s
+            if (segundosDecorridos % 10 === 0) salvarEstado();
         }, 1000);
     }
 
@@ -493,9 +508,10 @@
     }
 
     function voltarParaLista() {
-      document.getElementById('page-op-lista').style.display = 'block';
-      document.getElementById('page-op-materiais').style.display = 'none';
-      document.getElementById('page-op-tarefas').style.display = 'none';
+      document.getElementById('page-op-lista').classList.remove('hidden');
+      document.getElementById('page-op-materiais').classList.add('hidden');
+      document.getElementById('page-op-tarefas').classList.add('hidden');
+      atualizarStepper('lista');
       carregarOps();
     }
 
