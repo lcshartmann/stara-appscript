@@ -260,143 +260,85 @@ function limparProjetos() {
 }
 
 /**
- * Função Utilitária para gerar dados de teste e visualizar o Dashboard
+ * Setup inicial: cadastra usuarios e projeto Reboke Ninja
  */
-function gerarDadosMock() {
+function setupInicial() {
   try {
-    // ===== 1. Garantir operadores com diferentes perfis =====
-    var usuarios = UsuariosDB.listar();
-    var joao = usuarios.find(function(u) { return u.nome === 'João Silva'; }) || AuthService.criarUsuario('João Silva', '123', 'operador');
-    var maria = usuarios.find(function(u) { return u.nome === 'Maria Santos'; }) || AuthService.criarUsuario('Maria Santos', '123', 'operador');
-    var carlos = usuarios.find(function(u) { return u.nome === 'Carlos Oliveira'; }) || AuthService.criarUsuario('Carlos Oliveira', '123', 'operador');
+    DB.write('usuarios', []);
+    DB.write('projetos', []);
+    DB.write('ops', []);
+    DB.write('eventos', []);
 
-    // ===== 2. Criar 2 Projetos =====
-    var proj1 = criarProjeto({
-      nome: '🚜 Montagem Trator ST-500',
+    AuthService.criarUsuario('admin', 'admin', 'gestor');
+    AuthService.criarUsuario('operador', 'operador', 'operador');
+
+    var LINK = 'https://drive.google.com/file/d/1V7IiS5W6hecBlqbh3qNDoGUSM0Kk0yoE/view?usp=sharing';
+
+    var projeto = criarProjeto({
+      nome: 'Reboke Ninja',
       materiais: [
-        { nome: 'Chassi Reforçado', quantidade: '1' },
-        { nome: 'Motor Diesel 150cv', quantidade: '1' },
-        { nome: 'Rodas Aro 32', quantidade: '4' }
+        { nome: 'P1 - Olhal de Fixacao', quantidade: '1' },
+        { nome: 'P2 - Haste de Ligacao 1', quantidade: '1' },
+        { nome: 'P4 - Haste de Ligacao 2', quantidade: '1' },
+        { nome: 'P6 - Haste de Juncao', quantidade: '1' },
+        { nome: 'P9/P10 - Suportes Articuladores', quantidade: '2' },
+        { nome: 'P12 - Pneu', quantidade: '4' },
+        { nome: 'P13 - Haste de Suporte', quantidade: '1' },
+        { nome: 'P14 - Suporte Lateral Esquerdo', quantidade: '1' },
+        { nome: 'P15 - Suporte Lateral Direito', quantidade: '1' },
+        { nome: 'P17/P18/P21 - Chassi', quantidade: '3' },
+        { nome: 'P23/P24 - Hastes de Ligacao Articuladas', quantidade: '2' },
+        { nome: 'P26 - Chaparia Central', quantidade: '1' },
+        { nome: 'P28 - Chaparia Lateral Esquerda', quantidade: '1' },
+        { nome: 'P29 - Chaparia Lateral Direita', quantidade: '1' },
+        { nome: 'P32 - Chaparia Superior Traseira', quantidade: '1' },
+        { nome: 'P33 - Chaparia Superior Frontal', quantidade: '1' },
+        { nome: 'P36 - Tubo Estagio 1', quantidade: '1' },
+        { nome: 'P37 - Juncao de Tubos', quantidade: '1' },
+        { nome: 'P39 - Tubo Estagio 2', quantidade: '1' },
+        { nome: 'P41 - Boca do Tubo', quantidade: '1' },
+        { nome: 'F1/F4/F7/F10 - Parafuso M10', quantidade: '5' },
+        { nome: 'F2/F6/F9/F12 - Porca M10', quantidade: '5' },
+        { nome: 'F3/F5/F8/F11 - Arruela M10', quantidade: '5' },
+        { nome: 'F13/F14 - Porca e Arruela M8', quantidade: '4' },
+        { nome: 'F15/F18/F21/F36 - Porca M8', quantidade: '8' },
+        { nome: 'F16/F19/F22/F37 - Parafuso M8', quantidade: '8' },
+        { nome: 'F17/F20/F23/F38 - Arruela M8', quantidade: '8' },
+        { nome: 'F24/F27/F30 - Porca M4', quantidade: '14' },
+        { nome: 'F25/F28/F31 - Parafuso M4', quantidade: '14' },
+        { nome: 'F26/F29/F32 - Arruela M4', quantidade: '14' },
+        { nome: 'F33/F41 - Arruela M5', quantidade: '6' },
+        { nome: 'F34/F39 - Porca M5', quantidade: '6' },
+        { nome: 'F35/F40 - Parafuso M5', quantidade: '6' }
       ],
       tarefas: [
-        { nome: 'Preparação do Chassi', descricao: 'Limpeza e inspeção inicial.', links: '' },
-        { nome: 'Instalação do Motor', descricao: 'Acoplamento e torque dos parafusos.', links: '' },
-        { nome: 'Pintura e Acabamento', descricao: 'Aplicação de verniz protetivo.', links: '' }
+        { nome: 'Centralizacao do Olhal na Haste', descricao: 'Pegue P1 (Olhal de Fixacao) e centralize em P2 (Haste de Ligacao 1), de modo que os furos fiquem coincidentes.', links: LINK },
+        { nome: 'Fixacao com parafusos M10', descricao: 'Fixe P3 (Montagem Anterior = etapa 1) com F1 (Parafuso M10), F2 (Porca M10) e F3 (Arruela M10), em sentido horario ate o limite.', links: LINK },
+        { nome: 'Juncao das Hastes de Ligacao', descricao: 'Junte P4 (Haste de Ligacao 2) e P5 (Montagem Anterior = etapas 1-2) de modo coincidente e centralizado, e fixe com F4 (Parafuso M10), F5 (Arruela M10) e F6 (Porca M10) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Juncao da Haste de Juncao', descricao: 'Junte P6 (Haste de Juncao) e P7 (Montagem Anterior = etapas 1-3) de forma centralizada, perpendicular e coincidente, e fixe com F7 (Parafuso M10), F8 (Arruela M10) e F9 (Porca M10) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Montagem dos Suportes Articuladores', descricao: 'Posicione P9 e P10 (Suportes Articuladores) nas laterais de P8 (Montagem Anterior = etapas 1-4), e fixe com F10 (Parafuso M10, x2), F11 (Arruela M10, x2) e F12 (Porca M10, x2) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Montagem dos Pneus (dianteira)', descricao: 'Posicione P12 (Pneu, x2) nas laterais de P11 (Montagem Anterior = etapas 1-5), e fixe com F13 (Porca e Arruela M8, x2) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Montagem dos Suportes Laterais', descricao: 'Junte P14 (Suporte Lateral Esquerdo) e P15 (Suporte Lateral Direito) nas laterais de P13 (Haste de Suporte), de modo centralizado.', links: LINK },
+        { nome: 'Montagem dos Pneus (traseira)', descricao: 'Posicione P12 (Pneu, x2) nas laterais de P16 (Montagem Anterior = etapa 7), e fixe com F14 (Porca e Arruela M8, x2) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Chassi', descricao: 'P17 (Chassi) — sem instrucoes adicionais.', links: LINK },
+        { nome: 'Fixacao do primeiro Chassi', descricao: 'Posicione P18 (Chassi) acima de P19 (Montagem Anterior = etapas 1-6 e 8 combinadas), de modo centralizado, e fixe com F15 (Porca M8, x2), F16 (Parafuso M8, x2) e F17 (Arruela M8, x2) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Fixacao do segundo Chassi', descricao: 'Posicione P21 (Chassi) acima de P20 (Montagem Anterior = etapa 10), de modo centralizado, e fixe com F18 (Porca M8, x2), F19 (Parafuso M8, x2) e F20 (Arruela M8, x2) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Montagem das Hastes de Ligacao Articuladas', descricao: 'Posicione P23 e P24 (Hastes de Ligacao Articuladas) de modo coincidente na parte frontal de P22 (Montagem Anterior = etapas 1-11), e fixe com F21 (Porca M8, x3), F22 (Parafuso M8, x3) e F23 (Arruela M8, x3) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Montagem da Chaparia Central', descricao: 'Posicione P26 (Chaparia Central) acima de P25 (Montagem Anterior = etapas 1-12), de modo centralizado e coincidente, e fixe com F24 (Porca M4, x8), F25 (Parafuso M4, x8) e F26 (Arruela M4, x8) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Montagem da Chaparia Lateral Esquerda', descricao: 'Posicione P28 (Chaparia Lateral Esquerda) na lateral esquerda de P27 (Montagem Anterior = etapas 1-13), de modo coincidente, e fixe com F27 (Porca M4, x3), F28 (Parafuso M4, x3) e F29 (Arruela M4, x3) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Montagem da Chaparia Lateral Direita', descricao: 'Posicione P29 (Chaparia Lateral Direita) na lateral direita de P30 (Montagem Anterior = etapas 1-14), de modo coincidente, e fixe com F30 (Porca M4, x3), F31 (Parafuso M4, x3) e F32 (Arruela M4, x3) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Encaixe da Chaparia Superior Traseira', descricao: 'Encaixe P32 (Chaparia Superior Traseira) acima de P31 (Montagem Anterior = etapas 1-15) na parte traseira.', links: LINK },
+        { nome: 'Encaixe da Chaparia Superior Frontal', descricao: 'Encaixe P33 (Chaparia Superior Frontal) acima de P34 (Montagem Anterior = etapas 1-16) na parte frontal.', links: LINK },
+        { nome: 'Montagem do Tubo Estagio 1', descricao: 'Encaixe P36 (Tubo Estagio 1) na parte frontal direita de P35 (Montagem Anterior = etapas 1-17), e fixe com F33 (Arruela M5, x3), F34 (Porca M5, x3) e F35 (Parafuso M5, x3) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Fixacao da Juncao de Tubos', descricao: 'Fixe P37 (Juncao de Tubos) em P38 (Montagem Anterior = etapa 18) com F36 (Porca M8), F37 (Parafuso M8) e F38 (Arruela M8) no sentido horario ate o limite.', links: LINK },
+        { nome: 'Tubo Estagio 2', descricao: 'P39 (Tubo Estagio 2) em P40 (Montagem Anterior = etapa 19) — sem instrucoes adicionais.', links: LINK },
+        { nome: 'Montagem da Boca do Tubo (Final)', descricao: 'Junte P41 (Boca do Tubo) em P42 (Montagem Anterior = etapa 20) de modo coincidente, e fixe com F39 (Porca M5, x3), F40 (Parafuso M5, x3) e F41 (Arruela M5, x3) no sentido horario ate o limite. Montagem finalizada.', links: LINK }
       ]
     }).projeto;
 
-    var proj2 = criarProjeto({
-      nome: '🌾 Colheitadeira CX-2000',
-      materiais: [
-        { nome: 'Plataforma de Corte', quantidade: '1' },
-        { nome: 'Sistema de Trilha', quantidade: '1' },
-        { nome: 'Tanque Graneleiro', quantidade: '1' },
-        { nome: 'Motor Diesel 250cv', quantidade: '1' }
-      ],
-      tarefas: [
-        { nome: 'Montagem da Plataforma', descricao: 'Fixação da plataforma de corte.', links: '' },
-        { nome: 'Instalação do Sistema de Trilha', descricao: 'Ajuste dos cilindros de trilha.', links: '' },
-        { nome: 'Montagem do Tanque', descricao: 'Instalação do tanque graneleiro.', links: '' },
-        { nome: 'Calibração Final', descricao: 'Testes e calibração dos sistemas.', links: '' }
-      ]
-    }).projeto;
+    criarOp({ projeto_id: projeto.id, quantidade: 1 });
 
-    // ===== 3. Criar OPs =====
-    var agora = Date.now();
-    var DAY = 86400000;
-
-    // OP1: Trator, 3 unidades — COMPLETA
-    var op1 = criarOp({ projeto_id: proj1.id, quantidade: 3 }).op;
-    // OP2: Trator, 2 unidades — EM ANDAMENTO
-    var op2 = criarOp({ projeto_id: proj1.id, quantidade: 2 }).op;
-    // OP3: Colheitadeira, 4 unidades — COMPLETA
-    var op3 = criarOp({ projeto_id: proj2.id, quantidade: 4 }).op;
-    // OP4: Colheitadeira, 5 unidades — ABERTA (sem eventos)
-    criarOp({ projeto_id: proj2.id, quantidade: 5 });
-
-    // ===== 4. Helper de evento =====
-    function montarEvento(opId, tarefa, projetoId, usuario, tipo, timestamp, obs, duracao) {
-      var e = {
-        op_id: opId,
-        tarefa_id: tarefa.id,
-        tarefa_nome: tarefa.nome,
-        projeto_id: projetoId,
-        usuario_id: usuario.id,
-        usuario_nome: usuario.nome,
-        tipo: tipo,
-        timestamp_inicio: new Date(timestamp).toISOString()
-      };
-      if (obs) e.observacao = obs;
-      if (duracao != null) e.duracao_segundos = duracao;
-      return e;
-    }
-
-    // ===== 5. Helper: ciclo completo de tarefas para uma unidade =====
-    function cicloCompleto(opId, projeto, tarefas, usuario, timeStart, activeSec, hasPause) {
-      var eventos = [];
-      var t = timeStart;
-      for (var i = 0; i < tarefas.length; i++) {
-        var tarefa = tarefas[i];
-        var pausar = hasPause && i > 0;
-
-        eventos.push(montarEvento(opId, tarefa, projeto.id, usuario, 'inicio', t));
-
-        if (pausar) {
-          t += Math.round(activeSec * 0.4) * 1000;
-          eventos.push(montarEvento(opId, tarefa, projeto.id, usuario, 'pausa', t, 'Pausa para ajuste técnico'));
-          t += Math.round(activeSec * 0.2) * 1000;
-          eventos.push(montarEvento(opId, tarefa, projeto.id, usuario, 'retomada', t));
-          t += Math.round(activeSec * 0.6) * 1000;
-        } else {
-          t += activeSec * 1000;
-        }
-
-        eventos.push(montarEvento(opId, tarefa, projeto.id, usuario, 'conclusao', t, 'Execução concluída', activeSec));
-        t += 120000; // 2 min gap entre tarefas
-      }
-      return eventos;
-    }
-
-    // ===== 6. Gerar eventos =====
-
-    // -- OP1: Trator, 3 unidades, João, Maria, Carlos --
-    var ciclos1 = [
-      { usr: joao, sec: 700, pause: false, base: -7 * DAY },
-      { usr: maria, sec: 1100, pause: true, base: -6.4 * DAY },
-      { usr: carlos, sec: 2000, pause: true, base: -5.5 * DAY }
-    ];
-    for (var c1 = 0; c1 < ciclos1.length; c1++) {
-      var cl = ciclos1[c1];
-      var evts = cicloCompleto(op1.id, proj1, proj1.tarefas, cl.usr, agora + cl.base, cl.sec, cl.pause);
-      registrarLoteEventos(evts);
-    }
-
-    // -- OP2: Trator, 2 unidades, unidade 1 = João (completa), unidade 2 = Carlos (travado) --
-    // Unidade 1: João rápido, sem pausas
-    var ciclo2a = cicloCompleto(op2.id, proj1, proj1.tarefas, joao, agora - 2.2 * DAY, 700, false);
-    registrarLoteEventos(ciclo2a);
-    // Unidade 2: Carlos começa apenas a primeira tarefa, pausa, e nunca retoma
-    var t1 = proj1.tarefas[0];
-    var eventosStuck = [
-      montarEvento(op2.id, t1, proj1.id, carlos, 'inicio', agora - 0.8 * DAY),
-      montarEvento(op2.id, t1, proj1.id, carlos, 'pausa', agora - 0.8 * DAY + 400000, 'Chamado para reunião de emergência')
-    ];
-    registrarLoteEventos(eventosStuck);
-
-    // -- OP3: Colheitadeira, 4 unidades, intercalando Maria e João --
-    var perfisOP3 = [
-      { usr: maria, sec: 1100, pause: false, base: -6.5 * DAY },
-      { usr: joao, sec: 750, pause: false, base: -5 * DAY },
-      { usr: maria, sec: 1050, pause: true, base: -3.8 * DAY },
-      { usr: joao, sec: 700, pause: false, base: -2.5 * DAY }
-    ];
-    for (var c3 = 0; c3 < perfisOP3.length; c3++) {
-      var pf = perfisOP3[c3];
-      var evts3 = cicloCompleto(op3.id, proj2, proj2.tarefas, pf.usr, agora + pf.base, pf.sec, pf.pause);
-      registrarLoteEventos(evts3);
-    }
-
-    return { sucesso: true, mensagem: "Dados Mock gerados com sucesso! (João, Maria, Carlos)" };
+    return { sucesso: true, mensagem: 'Setup inicial realizado com sucesso!' };
   } catch (e) {
     return { sucesso: false, erro: e.message };
   }

@@ -284,20 +284,20 @@
     }
 
     function renderizarMateriais(materiais) {
-      var html = '<div style="display: flex; flex-direction: column; gap: 12px; padding: 10px;">';
       if (!materiais || materiais.length === 0) {
-        html = '<div class="placeholder">Nenhum material cadastrado.</div>';
-      } else {
-        materiais.forEach(function(m) {
-          html += `<label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 10px; border-radius: 8px; border: 1px solid #eee;">
-            <input type="checkbox" style="width: 20px; height: 20px;">
-            <div style="flex: 1;">
-              <div style="font-weight: 600; font-size: 16px;">${m.nome}</div>
-              <div style="color: var(--text-secondary); font-size: 14px;">Quantidade: ${m.quantidade}</div>
-            </div>
-          </label>`;
-        });
+        document.getElementById('listaMateriaisCheck').innerHTML = '<div class="placeholder">Nenhum material cadastrado.</div>';
+        return;
       }
+      var html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; padding: 10px;">';
+      materiais.forEach(function(m) {
+        html += `<label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 10px; border-radius: 8px; border: 1px solid #eee;">
+          <input type="checkbox" style="width: 20px; height: 20px; flex-shrink: 0;">
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 600; font-size: 16px; word-wrap: break-word;">${m.nome}</div>
+            <div style="color: var(--text-secondary); font-size: 14px;">Quantidade: ${m.quantidade}</div>
+          </div>
+        </label>`;
+      });
       document.getElementById('listaMateriaisCheck').innerHTML = html + '</div>';
     }
 
